@@ -34,6 +34,7 @@ class LoHelper
     const SUGGESTED_COMPLETION_UNIT  = 'suggested_completion_unit';
     const PASS_RATE                  = 'pass_rate';
     const SINGLE_LI                  = 'single_li';
+    const ALLOW_REUSE_ENROLMENT      = 'allow_reuse_enrolment'; // Use existing enrollments for reused content
 
     // GO1P-5665: Expiration for award.
     const AWARD      = 'award';
@@ -106,7 +107,7 @@ class LoHelper
             if ($expensiveTree) {
                 $load = function (array &$nodes, array &$nodeIds, array $edgeTypes) use (&$db, $instanceId) {
                     $itemIds = [];
-                    $q = 'SELECT source_id, target_id FROM gc_ro WHERE source_id IN (?) AND type IN (?)';
+                    $q = 'SELECT source_id, target_id FROM gc_ro WHERE source_id IN (?) AND type IN (?) ORDER BY weight';
                     $q = $db->executeQuery($q, [$nodeIds, $edgeTypes], [DB::INTEGERS, DB::INTEGERS]);
 
                     while ($edge = $q->fetch(DB::OBJ)) {
@@ -505,5 +506,10 @@ class LoHelper
         }
 
         return $result;
+    }
+
+    public static function allowReuseEnrolment(stdClass $lo): bool
+    {
+        return boolval($lo->data->{self::ALLOW_REUSE_ENROLMENT} ?? false);
     }
 }
