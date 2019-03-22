@@ -8,6 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 use go1\clients\MqClient;
 use go1\util\DB;
 use go1\util\schema\AwardSchema;
+use go1\util\schema\CollectionSchema;
 use go1\util\schema\InstallTrait;
 use go1\util\schema\mock\UserMockTrait;
 use go1\util\UtilCoreServiceProvider;
@@ -22,7 +23,7 @@ class UtilCoreTestCase extends TestCase
     use QueueMockTrait;
 
     /** @var  Connection */
-    protected $db;
+    protected $go1;
     protected $log;
 
     /** @var MqClient */
@@ -31,14 +32,15 @@ class UtilCoreTestCase extends TestCase
 
     protected $schemaClasses = [
         AwardSchema::class,
+        CollectionSchema::class
     ];
 
-    public function setUp()
+    public function setUp() : void
     {
-        $this->db = DriverManager::getConnection(['url' => 'sqlite://sqlite::memory:']);
-        $this->installGo1Schema($this->db, false, 'accounts.test');
+        $this->go1 = DriverManager::getConnection(['url' => 'sqlite://sqlite::memory:']);
+        $this->installGo1Schema($this->go1, false, 'accounts.test');
 
-        DB::install($this->db, [
+        DB::install($this->go1, [
             function (Schema $schema) {
                 $this->setupDatabaseSchema($schema);
             },

@@ -16,6 +16,13 @@ use stdClass;
 
 class AwardHelper
 {
+    public static function isEmbeddedPortalActive(stdClass $award): bool
+    {
+        $portal = $award->embedded->portal ?? null;
+
+        return $portal ? $portal->status : true;
+    }
+
     public static function getQuantityType($quantity)
     {
         if (is_null($quantity)) {
@@ -59,6 +66,11 @@ class AwardHelper
         $award->quantity = isset($award->quantity) ? (float) $award->quantity : null;
         $award->expire = ctype_digit($award->expire) ? (int) $award->expire : $award->expire;
         $award->created = intval($award->created);
+    }
+
+    public static function loadOrGetFromAwardEnrolmentEmbeddedData(Connection $db, stdClass $awardEnrolment)
+    {
+        return $awardEnrolment->embedded->award ?? self::load($db, $awardEnrolment->award_id);
     }
 
     public static function load(Connection $db, int $awardId, array $statuses = [])
@@ -205,9 +217,7 @@ class AwardHelper
 
     public static function loadEnrolment(Connection $db, int $awardEnrolmentId)
     {
-        return ($enrolments = static::loadEnrolments($db, [$awardEnrolmentId]))
-            ? $enrolments[0]
-            : false;
+        return ($enrolments = static::loadEnrolments($db, [$awardEnrolmentId])) ? $enrolments[0] : false;
     }
 
     public static function loadEnrolmentBy(Connection $db, int $awardId, int $userId, int $instanceId)
@@ -232,11 +242,11 @@ class AwardHelper
         return $db->fetchColumn('SELECT id FROM award_award WHERE revision_id = ?', [$awardRevisionId]);
     }
 
-    public static function assessorIds(Connection $db, int $loId): array
+    public static function assessorIds(Connection $go1, int $loId): array
     {
         return EdgeHelper
             ::select('target_id')
-            ->get($db, [$loId], [], [EdgeTypes::AWARD_ASSESSOR], PDO::FETCH_COLUMN);
+            ->get($go1, [$loId], [], [EdgeTypes::AWARD_ASSESSOR], PDO::FETCH_COLUMN);
     }
 
     public static function awardParentIds(Connection $db, array $awardIds)

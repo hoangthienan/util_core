@@ -25,6 +25,14 @@ class UserHelper
     const QUIZ_ADMIN_USER_ID           = -200;
     const QUIZ_ADMIN_PROFILE_ID        = -200;
 
+    public static function isEmbeddedPortalActive(stdClass $user): bool
+    {
+        $portals = $user->embedded->portal ?? null;
+        $portal = is_array($portals) ? array_shift($portals) : $portals;
+
+        return $portal ? $portal->status : true;
+    }
+
     public static function load(Connection $db, int $id, string $instance = null, $columns = '*')
     {
         $sql = "SELECT $columns FROM gc_user WHERE id = ?";
@@ -266,7 +274,7 @@ class UserHelper
         return null;
     }
 
-    public static function loadUserByProfileId(Connection $db, int $profileId, string $columns = '*'):? stdClass
+    public static function loadUserByProfileId(Connection $db, int $profileId, string $columns = '*'): ?stdClass
     {
         $user = $db
             ->executeQuery("SELECT $columns FROM gc_users WHERE profile_id = ?", [$profileId], [DB::INTEGER])

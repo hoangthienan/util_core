@@ -2,6 +2,7 @@
 
 namespace go1\util\lo\explore;
 
+use go1\util\customer\CustomerEsSchema;
 use go1\util\enrolment\EnrolmentStatuses;
 use go1\util\es\Schema;
 
@@ -12,11 +13,12 @@ class LoExploreSchema
     ];
 
     const MAPPING = [
-        Schema::O_LO         => self::LO_MAPPING,
-        Schema::O_ENROLMENT  => self::ENROLMENT_MAPPING,
-        Schema::O_GROUP_ITEM => self::GROUP_ITEM_MAPPING,
-        Schema::O_ACCOUNT    => self::ACCOUNT_MAPPING,
-        Schema::O_PORTAL     => self::PORTAL_MAPPING,
+        Schema::O_LO                => self::LO_MAPPING,
+        Schema::O_GROUP             => self::GROUP_MAPPING,
+        Schema::O_ENROLMENT         => self::ENROLMENT_MAPPING,
+        Schema::O_GROUP_ITEM        => self::GROUP_ITEM_MAPPING,
+        CustomerEsSchema::O_ACCOUNT => self::ACCOUNT_MAPPING,
+        CustomerEsSchema::O_PORTAL  => self::PORTAL_MAPPING,
     ];
 
     const LO_MAPPING = [
@@ -99,9 +101,11 @@ class LoExploreSchema
                     'administrative_area'      => ['type' => Schema::T_KEYWORD],
                     'administrative_area_name' => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
                     'locality'                 => ['type' => Schema::T_KEYWORD],
+                    'location_name'            => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
                     'dependent_locality'       => ['type' => Schema::T_KEYWORD],
                     'thoroughfare'             => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
                     'instructor_ids'           => ['type' => Schema::T_INT],
+                    'coordinate'               => ['type' => Schema::T_GEO_POINT],
                 ],
             ],
             'vote'            => [
@@ -173,6 +177,7 @@ class LoExploreSchema
             'groups'    => ['type' => Schema::T_INT],
             'enrolment' => [
                 'properties' => [
+                    'assigned'                   => ['type' => Schema::T_KEYWORD],
                     'not_started'                => ['type' => Schema::T_KEYWORD],
                     'in_progress'                => ['type' => Schema::T_KEYWORD],
                     'last_completed'             => ['type' => Schema::T_KEYWORD],
@@ -193,9 +198,25 @@ class LoExploreSchema
     const PORTAL_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => [
-            'id'       => ['type' => Schema::T_KEYWORD],
-            'groups'   => ['type' => Schema::T_INT],
-            'metadata' => [
+            'id'                 => ['type' => Schema::T_KEYWORD],
+            'groups'             => ['type' => Schema::T_INT],
+            'groups_v1'          => ['type' => Schema::T_INT], # List of group(version 1) that shared to portal via group policy.
+            'selected_groups_v1' => ['type' => Schema::T_INT], # List of group(version 1) that selected via portal content selection.
+            'metadata'           => [
+                'properties' => [
+                    'portal_id'  => ['type' => Schema::T_INT],
+                    'updated_at' => ['type' => Schema::T_INT],
+                ],
+            ],
+        ],
+    ];
+
+    const GROUP_MAPPING = [
+        '_routing'   => ['required' => true],
+        'properties' => [
+            'id'               => ['type' => Schema::T_KEYWORD],
+            'assigned_content' => ['type' => Schema::T_KEYWORD],
+            'metadata'         => [
                 'properties' => [
                     'portal_id'  => ['type' => Schema::T_INT],
                     'updated_at' => ['type' => Schema::T_INT],

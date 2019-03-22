@@ -43,9 +43,22 @@ class LoHelper
         'expiration' => ['type' => 'string', 'default' => '+ 1 year'],
     ];
 
-    public static function load(Connection $db, int $id, int $instanceId = null, bool $expensiveTree = false)
+    # I was able to import stdClass before, now sometime, I can't!
+    public static function isEmbeddedPortalActive(\stdClass $lo): bool
     {
-        return ($learningObjects = static::loadMultiple($db, [$id], $instanceId, $expensiveTree)) ? $learningObjects[0] : false;
+        $portal = $lo->embedded->portal ?? null;
+
+        return $portal ? $portal->status : true;
+    }
+
+    public static function loadOrGetFromEmbeddedData(Connection $go1, stdClass $payload, string $loIdProperty = 'lo_id')
+    {
+        return $payload->embedded->lo ?? self::load($go1, $payload->{$loIdProperty});
+    }
+
+    public static function load(Connection $go1, int $id, int $portalId = null, bool $expensiveTree = false)
+    {
+        return ($learningObjects = static::loadMultiple($go1, [$id], $portalId, $expensiveTree)) ? $learningObjects[0] : false;
     }
 
     public static function loadMultiple(Connection $db, array $ids, int $portalId = null, bool $expensiveTree = false): array
@@ -259,7 +272,7 @@ class LoHelper
             'b', 'code', 'del', 'dd', 'dl', 'dt', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
             'sup', 'sub', 'div', 'p', 'blockquote', 'strong', 'i', 'kbd', 's',
             'strike', 'hr', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'em', 'pre', 'br',
-            'table', 'a', 'iframe', 'img', 'ul', 'li', 'ol', 'caption', 'span',
+            'table', 'a', 'iframe', 'img', 'ul', 'li', 'ol', 'caption', 'span', 'u',
         ]);
         $cnf->set('HTML.AllowedAttributes', [
             'a.href', 'a.rel', 'a.target',
@@ -271,7 +284,7 @@ class LoHelper
             'iframe.frameborder', 'iframe.mozallowfullscreen', 'iframe.webkitallowfullscreen',
         ]);
         $cnf->set('HTML.SafeIframe', true);
-        $cnf->set('URI.SafeIframeRegexp', '%^(https?:)?//(www\.youtube(?:-nocookie)?\.com/embed/|player\.vimeo\.com/video/|fast\.wistia\.net\/embed/)%');
+        $cnf->set('URI.SafeIframeRegexp', '%^(https?:)?//(www\.youtube(?:-nocookie)?\.com/embed/|player\.vimeo\.com/video/|fast\.wistia\.net\/embed/|video\.blueoceanacademy\.cn)%');
         $cnf->set('Attr.AllowedFrameTargets', ['_blank', '_self', '_parent', '_top']);
 
         $def = $cnf->getHTMLDefinition(true);

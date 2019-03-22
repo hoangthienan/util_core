@@ -22,24 +22,24 @@ class AwardCreateEventEmbedderTest extends UtilCoreTestCase
     protected $jwt;
     protected $awardId;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
 
         $c = $this->getContainer();
-        $this->portalId = $this->createPortal($this->db, ['title' => 'qa.mygo1.com']);
-        $this->userId = $this->createUser($this->db, ['instance' => $c['accounts_name']]);
-        $this->accountId = $this->createUser($this->db, ['instance' => 'qa.mygo1.com']);
-        $this->link($this->db, EdgeTypes::HAS_ACCOUNT, $this->userId, $this->accountId);
-        $this->jwt = $this->jwtForUser($this->db, $this->userId, 'qa.mygo1.com');
-        $this->awardId = $this->createAward($this->db, ['instance_id' => $this->portalId, 'user_id' => $this->userId]);
+        $this->portalId = $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']);
+        $this->userId = $this->createUser($this->go1, ['instance' => $c['accounts_name']]);
+        $this->accountId = $this->createUser($this->go1, ['instance' => 'qa.mygo1.com']);
+        $this->link($this->go1, EdgeTypes::HAS_ACCOUNT, $this->userId, $this->accountId);
+        $this->jwt = $this->jwtForUser($this->go1, $this->userId, 'qa.mygo1.com');
+        $this->awardId = $this->createAward($this->go1, ['instance_id' => $this->portalId, 'user_id' => $this->userId]);
     }
 
     public function test()
     {
         $c = $this->getContainer();
-        $award = AwardHelper::load($this->db, $this->awardId);
-        $embedder = new AwardCreateEventEmbedder($this->db, $c['access_checker']);
+        $award = AwardHelper::load($this->go1, $this->awardId);
+        $embedder = new AwardCreateEventEmbedder($this->go1, $c['access_checker']);
         $req = Request::create('/', 'POST');
         $req->attributes->set('jwt.payload', Text::jwtContent($this->jwt));
         $embedded = $embedder->embedded($award, $req);
