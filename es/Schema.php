@@ -440,7 +440,6 @@ class Schema
 
     const ENROLMENT_MAPPING_REVISION = [
         '_routing'   => ['required' => true],
-        '_parent'    => ['type' => self::O_ENROLMENT],
         'properties' => [
             'id'                  => ['type' => self::T_KEYWORD],
             'user_id'             => ['type' => self::T_INT],
@@ -726,7 +725,6 @@ class Schema
 
     const EVENT_MAPPING = [
         '_routing'   => ['required' => true],
-        '_parent'    => ['type' => self::O_LO],
         'properties' => self::EVENT_PROPERTIES + [
                 'parent'   => [
                     'properties' => self::LO_MAPPING['properties'],

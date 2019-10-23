@@ -191,6 +191,7 @@ class Queue
     const POLICY_ITEM_CREATE            = 'policy.item.create';
     const POLICY_ITEM_UPDATE            = 'policy.item.update';
     const POLICY_ITEM_DELETE            = 'policy.item.delete';
+    const POLICY_ITEM_SYNC              = 'policy.item.sync';
     const PAGEUP_COURSE_UPLOAD          = 'pageup.course.upload';
     const EXIM_TASK_UPDATE              = 'exim.task.update';
     const PURCHASE_REQUEST_CREATE       = 'purchase.request.create';
@@ -207,6 +208,9 @@ class Queue
     const CONTENT_IMPORT_PROCESS_IMPORT = 'content_import.process.import';
     const CONTENT_IMPORT_PROCESS_IMPORT_JOB = 'content_import_job.process.import';
     const MARKETPLACE_SCHEDULED_PUBLISH = 'marketplace.scheduled_publish';
+    const MARKETPLACE_SYNC_CHILD        = 'marketplace.sync_child';
+    const MERGE_ACCOUNT_ENROLMENT_REVISION  = 'merge-account.enrolment-revision'; // Change profile_id of enrolment revisions, body: {profile_id, portal_id}
+
 
     /**
      * @deprecated

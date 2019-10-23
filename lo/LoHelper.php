@@ -196,7 +196,11 @@ class LoHelper
                     $atts->dimensionId = $attribute->dimension_id;
                     $atts->loId = $attribute->lo_id;
                     $atts->attributeType = $attribute->attribute_type;
-                    $arr[$attribute->lo_id][$_] = self::formatAttributeValue($attribute->value, $atts);
+                    if ($atts->isArray) {
+                        $arr[$attribute->lo_id][$_][] = self::formatAttributeValue($attribute->value, $atts);
+                    } else {
+                        $arr[$attribute->lo_id][$_] = self::formatAttributeValue($attribute->value, $atts);
+                    }
                 }
             }
         } catch (\Exception $e) {
@@ -349,6 +353,13 @@ class LoHelper
         $cnf->set('Core.HiddenElements', []);
 
         return $cnf;
+    }
+
+    public static function sanitizeTitle(string $title = "") {
+        // HTML Decode Characters, replace br and new lines with spaces
+        $title = preg_replace("/(<br\W*?\/?>)|(\s+)/im", " ", html_entity_decode($title, ENT_QUOTES));
+        // Strip tags and trim
+        return trim(strip_tags($title));
     }
 
     public static function assessorIds(Connection $db, int $loId): array
@@ -574,7 +585,12 @@ class LoHelper
         }
 
         if ($lookup->isArray) {
-            $value = json_decode($value);
+            $tempValue = json_decode($value);
+            if (!is_null($tempValue) && !is_numeric($tempValue)) {
+                $value = $tempValue;
+            } else if ($lookup->attributeType == LoAttributeTypes::TEXT) {
+                $value = "$value";
+            }
         }
 
         return $value;
