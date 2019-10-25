@@ -94,6 +94,7 @@ class LoExploreSchema
                     'assessable'            => ['type' => Schema::T_INT],
                     'mobile_optimised'      => ['type' => Schema::T_INT],
                     'wcag'                  => ['type' => Schema::T_INT],
+                    'internal_qa_rating'    => ['type' => Schema::T_INT],
                     'region_restrictions'    => [
                         'type'          => Schema::T_NESTED,
                         'properties'    => [
