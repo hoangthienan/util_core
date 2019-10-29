@@ -40,7 +40,7 @@ class LoAttributes
             self::DOWNLOAD_SPEED            => 'download_speed',
             self::AUDIO_VISUAL_DESIGN       => 'audio_visual_design',
             self::PRESENTATION_OF_CONTENT   => 'presentation_of_content',
-            self::STRUCTURE_NAVIGATION      => 'structure_navigation'
+            self::STRUCTURE_NAVIGATION      => 'structure_navigation',
         ];
 
         return $map[$attribute] ?? null;
