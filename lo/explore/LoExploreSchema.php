@@ -90,12 +90,16 @@ class LoExploreSchema
             ],
             'attributes'    => [
                 'properties' => [
-                    'learning_outcomes'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
-                    'assessable'            => ['type' => Schema::T_INT],
-                    'mobile_optimised'      => ['type' => Schema::T_INT],
-                    'wcag'                  => ['type' => Schema::T_INT],
-                    'internal_qa_rating'    => ['type' => Schema::T_INT],
-                    'region_restrictions'    => [
+                    'learning_outcomes'       => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                    'assessable'              => ['type' => Schema::T_INT],
+                    'mobile_optimised'        => ['type' => Schema::T_INT],
+                    'wcag'                    => ['type' => Schema::T_INT],
+                    'internal_qa_rating'      => ['type' => Schema::T_INT],
+                    'download_speed'          => ['type' => Schema::T_INT],
+                    'audio_visual_design'     => ['type' => Schema::T_INT],
+                    'presentation_of_content' => ['type' => Schema::T_INT],
+                    'structure_navigation'    => ['type' => Schema::T_INT],
+                    'region_restrictions'     => [
                         'type'          => Schema::T_NESTED,
                         'properties'    => [
                             'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
