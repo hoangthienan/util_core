@@ -201,7 +201,7 @@ trait LoMockTrait
     }
 
     public function createAttributeLookup(Connection $db, $key, $name, $attributeType, $loType, $required,
-                                          $permission, $defaultValue, $isArray = 0, $dimensionId = null, $validationRegex)
+                                          $permission, $defaultValue, $isArray = 0, $dimensionId = null, $validationRegex = null)
     {
         $db->insert('gc_lo_attributes_lookup', [
             '`key`'             => $key,
