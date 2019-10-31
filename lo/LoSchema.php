@@ -256,6 +256,7 @@ class LoSchema
                 'unsigned' => true,
                 'notnull'  => false,
             ]);
+            $attr->addColumn('validation_regex', 'string', ['notnull'  => false ]);
             $attr->setPrimaryKey(['id']);
         }
 
