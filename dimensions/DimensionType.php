@@ -4,11 +4,12 @@ namespace go1\util\dimensions;
 
 class DimensionType
 {
-    const TOPIC               = 1;
-    const INDUSTRY            = 2;
-    const REGION_RESTRICTION  = 3;
-    const LOCATION            = 4;
-    const BUSINESS_AREA       = 5;
+    const TOPIC                  = 1;
+    const INDUSTRY               = 2;
+    const REGION_RESTRICTION     = 3;
+    const LOCATION               = 4;
+    const BUSINESS_AREA          = 5;
+    const EXTERNAL_ACTIVITY_TYPE = 6;
 
     public static function all()
     {
