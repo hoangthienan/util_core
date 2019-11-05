@@ -23,6 +23,8 @@ class LoAttributes
     const AUDIO_VISUAL_DESIGN           = 12;
     const PRESENTATION_OF_CONTENT       = 13;
     const STRUCTURE_NAVIGATION          = 14;
+    const INTEGRATION                   = 15;
+    const INTEGRATION_URL               = 16;
 
     public static function machineName(int $attribute): ?string
     {
@@ -41,6 +43,8 @@ class LoAttributes
             self::AUDIO_VISUAL_DESIGN       => 'audio_visual_design',
             self::PRESENTATION_OF_CONTENT   => 'presentation_of_content',
             self::STRUCTURE_NAVIGATION      => 'structure_navigation',
+            self::INTEGRATION               => 'integration',
+            self::INTEGRATION_URL           => 'integration_url',
         ];
 
         return $map[$attribute] ?? null;
