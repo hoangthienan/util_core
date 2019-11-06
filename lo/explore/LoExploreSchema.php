@@ -10,6 +10,18 @@ class LoExploreSchema
 {
     const BODY = [
         'mappings' => self::MAPPING,
+        'settings' => self::SETTINGS,
+    ];
+
+    const SETTINGS = [
+        'analysis' => [
+            'normalizer' => [
+                'lowercase' => [
+                    'type' => 'custom',
+                    'filter' => ['lowercase']
+                ]
+            ]
+        ]
     ];
 
     const MAPPING = [
@@ -38,8 +50,8 @@ class LoExploreSchema
             'title'           => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
             'description'     => ['type' => Schema::T_TEXT],
             'summary'         => ['type' => Schema::T_TEXT],
-            'tags'            => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
-            'custom_tags'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+            'tags'            => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED_AND_NORMALIZED,
+            'custom_tags'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED_AND_NORMALIZED,
             'topics'          => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
             'pricing'         => [
                 'properties' => [
