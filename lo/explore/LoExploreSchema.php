@@ -111,6 +111,9 @@ class LoExploreSchema
                     'audio_visual_design'     => ['type' => Schema::T_INT],
                     'presentation_of_content' => ['type' => Schema::T_INT],
                     'structure_navigation'    => ['type' => Schema::T_INT],
+                    'featured_status'         => ['type' => Schema::T_INT],
+                    'featured_locale'         => ['type' => Schema::T_KEYWORD],
+                    'featured_timestamp'      => ['type' => Schema::T_INT],
                     'region_restrictions'     => [
                         'type'          => Schema::T_NESTED,
                         'properties'    => [
