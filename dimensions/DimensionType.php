@@ -10,6 +10,7 @@ class DimensionType
     const LOCATION               = 4;
     const BUSINESS_AREA          = 5;
     const EXTERNAL_ACTIVITY_TYPE = 6;
+    const LEARNER_LEVEL          = 7;
 
     public static function all()
     {
