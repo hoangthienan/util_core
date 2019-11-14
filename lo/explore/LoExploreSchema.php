@@ -114,6 +114,12 @@ class LoExploreSchema
                     'featured_status'         => ['type' => Schema::T_INT],
                     'featured_locale'         => ['type' => Schema::T_KEYWORD],
                     'featured_timestamp'      => ['type' => Schema::T_INT],
+                    'entry_level'    => [
+                        'properties'    => [
+                            'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                            'key'       => ['type' => Schema::T_KEYWORD],
+                        ],
+                    ],
                     'region_restrictions'     => [
                         'type'          => Schema::T_NESTED,
                         'properties'    => [
