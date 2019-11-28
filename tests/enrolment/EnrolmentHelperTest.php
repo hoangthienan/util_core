@@ -474,4 +474,28 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $this->assertEquals($courseEnrolmentId, EnrolmentHelper::parentEnrolment($this->go1, $moduleEnrolment)->id);
         $this->assertEquals($moduleEnrolmentId, EnrolmentHelper::parentEnrolment($this->go1, $videoEnrolment, LoTypes::MODULE)->id);
     }
+
+    public function testHasEnrolment()
+    {
+        $portalAId = $this->portalId;
+        $portalBName = 'za.mygo1.com';
+        $portalBId = $this->createPortal($this->go1, ['title' => $portalBName]);
+
+        $coursePortalAEnrolmentId = $this->createEnrolment($this->go1, ['lo_id' => $this->courseId, 'profile_id' => $this->profileId, 'taken_instance_id' => $portalAId]);
+        $modulePortalAEnrolmentId = $this->createEnrolment($this->go1, ['lo_id' => $this->moduleId, 'profile_id' => $this->profileId, 'taken_instance_id' => $portalAId, 'parent_lo_id' => $this->courseId, 'parent_enrolment_id' => $coursePortalAEnrolmentId]);
+        $videoPortalAEnrolmentId = $this->createEnrolment($this->go1, ['lo_id' => $this->liVideoId, 'profile_id' => $this->profileId, 'taken_instance_id' => $portalAId, 'parent_lo_id' => $this->moduleId, 'parent_enrolment_id' => $modulePortalAEnrolmentId]);
+
+        $this->assertTrue(EnrolmentHelper::hasEnrolment($this->go1, $this->courseId, $this->profileId));
+        $this->assertTrue(EnrolmentHelper::hasEnrolment($this->go1, $this->liVideoId, $this->profileId, $this->moduleId));
+
+        $this->assertTrue(EnrolmentHelper::hasEnrolment($this->go1, $this->courseId, $this->profileId, null, $portalAId));
+        $this->assertTrue(EnrolmentHelper::hasEnrolment($this->go1, $this->liVideoId, $this->profileId, $this->moduleId, $portalAId));
+
+        $coursePortalBEnrolmentId = $this->createEnrolment($this->go1, ['lo_id' => $this->courseId, 'profile_id' => $this->profileId, 'taken_instance_id' => $portalBId]);
+        $this->assertTrue(EnrolmentHelper::hasEnrolment($this->go1, $this->courseId, $this->profileId, null, $portalBId));
+
+        $this->expectException(\LengthException::class);
+        $this->expectExceptionMessage('More than one enrolment return.');
+        $this->assertTrue(EnrolmentHelper::hasEnrolment($this->go1, $this->courseId, $this->profileId));
+    }
 }
