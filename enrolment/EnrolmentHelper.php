@@ -312,11 +312,11 @@ class EnrolmentHelper
         $queue->publish($data, Queue::ENROLMENT_CREATE, ['notify_email' => $notify, $actorIdKey => $assignerId]);
     }
 
-    public static function hasEnrolment(Connection $db, int $loId, int $profileId, int $parentLoId = null, int $takenInstanceId = null)
+    public static function hasEnrolment(Connection $db, int $loId, int $profileId, int $parentLoId = null, int $takenPortalId = null)
     {
         return (boolean) (
-            $takenInstanceId
-                ? static::loadByLoProfileAndPortal($db, $loId, $profileId, $takenInstanceId, $parentLoId, '1', DB::COL)
+            $takenPortalId
+                ? static::loadByLoProfileAndPortal($db, $loId, $profileId, $takenPortalId, $parentLoId, '1', DB::COL)
                 : static::loadByLoAndProfileId($db, $loId, $profileId, $parentLoId, '1', DB::COL)
         );
     }
