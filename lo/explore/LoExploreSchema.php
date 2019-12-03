@@ -10,6 +10,18 @@ class LoExploreSchema
 {
     const BODY = [
         'mappings' => self::MAPPING,
+        'settings' => self::SETTINGS,
+    ];
+
+    const SETTINGS = [
+        'analysis' => [
+            'normalizer' => [
+                'lowercase' => [
+                    'type' => 'custom',
+                    'filter' => ['lowercase']
+                ]
+            ]
+        ]
     ];
 
     const MAPPING = [
@@ -38,8 +50,8 @@ class LoExploreSchema
             'title'           => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
             'description'     => ['type' => Schema::T_TEXT],
             'summary'         => ['type' => Schema::T_TEXT],
-            'tags'            => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
-            'custom_tags'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+            'tags'            => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED_AND_NORMALIZED,
+            'custom_tags'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED_AND_NORMALIZED,
             'topics'          => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
             'pricing'         => [
                 'properties' => [
@@ -72,6 +84,7 @@ class LoExploreSchema
             'data'            => [
                 'properties' => [
                     'single_li' => ['type' => Schema::T_SHORT],
+                    'source_id' => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
                 ],
             ],
             'locations'       => [
@@ -89,27 +102,64 @@ class LoExploreSchema
             ],
             'attributes'    => [
                 'properties' => [
-                    'learning_outcomes'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
-                    'assessable'            => ['type' => Schema::T_INT],
-                    'mobile_optimised'      => ['type' => Schema::T_INT],
-                    'wcag'                  => ['type' => Schema::T_INT],
-                    'region_restrictions'    => [
+                    'learning_outcomes'       => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                    'assessable'              => ['type' => Schema::T_INT],
+                    'mobile_optimised'        => ['type' => Schema::T_INT],
+                    'wcag'                    => ['type' => Schema::T_INT],
+                    'internal_qa_rating'      => ['type' => Schema::T_INT],
+                    'download_speed'          => ['type' => Schema::T_INT],
+                    'audio_visual_design'     => ['type' => Schema::T_INT],
+                    'presentation_of_content' => ['type' => Schema::T_INT],
+                    'structure_navigation'    => ['type' => Schema::T_INT],
+                    'featured_status'         => ['type' => Schema::T_INT],
+                    'featured_locale'         => ['type' => Schema::T_KEYWORD],
+                    'featured_timestamp'      => ['type' => Schema::T_INT],
+                    'entry_level' => [
+                        'properties'    => [
+                            'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                            'key'       => ['type' => Schema::T_KEYWORD],
+                        ],
+                    ],
+                    'region_restrictions' => [
                         'type'          => Schema::T_NESTED,
                         'properties'    => [
                             'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
                             'key'       => ['type' => Schema::T_KEYWORD],
                         ],
                     ],
-                    'topics'    => [
+                    'topics' => [
                         'type'          => Schema::T_NESTED,
                         'properties'    => [
                             'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
                             'key'       => ['type' => Schema::T_KEYWORD],
                         ],
                     ],
+                    'locale' => [
+                        'type'          => Schema::T_NESTED,
+                        'properties'    => [
+                            'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                            'key'       => ['type' => Schema::T_KEYWORD],
+                        ],
+                    ],
+                    'region_relevance' => [
+                        'type'          => Schema::T_NESTED,
+                        'properties'    => [
+                            'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                            'key'       => ['type' => Schema::T_KEYWORD],
+                        ],
+                    ],
+                    'industry' => [
+                        'type'          => Schema::T_NESTED,
+                        'properties'    => [
+                            'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                            'key'       => ['type' => Schema::T_KEYWORD],
+                        ],
+                    ],
+                    /** @see https://github.com/go1com/util_core/blob/master/lo/LoAttributes.php#L20 */
+                    'provider' => ['type' => Schema::T_KEYWORD],
                 ],
             ],
-            'events'          => [
+            'events'         => [
                 'type'       => Schema::T_NESTED,
                 'properties' => [
                     'id'                       => ['type' => Schema::T_KEYWORD],

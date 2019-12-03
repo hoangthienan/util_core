@@ -20,7 +20,7 @@ class LearningRecordEsSchema
                 'number_of_shards'                 => getenv('ES_SCHEMA_NUMBER_OF_SHARDS') ?: 5,
                 'number_of_replicas'               => getenv('ES_SCHEMA_NUMBER_OF_REPLICAS') ?: 1,
                 'index.mapping.total_fields.limit' => getenv('ES_SCHEMA_LIMIT_TOTAL_FIELDS') ?: 5000,
-            ],
+            ] + Schema::SETTINGS,
             'mappings' => self::MAPPING,
         ];
     }

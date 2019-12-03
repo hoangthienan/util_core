@@ -51,6 +51,7 @@ class PortalSchema
             $data->addColumn('expiry_date', 'integer', ['unsigned' => true, 'notnull' => false]);
             $data->addColumn('cancel_expiry_date', 'integer', ['unsigned' => true, 'notnull' => false]);
             $data->addColumn('partner_portal_id', 'integer', ['unsigned' => true, 'notnull' => false]);
+            $data->addColumn('referrer', 'string', ['notnull' => false]);
 
             $data->setPrimaryKey(['id']);
             $data->addIndex(['state']);
@@ -66,6 +67,7 @@ class PortalSchema
             $data->addIndex(['expiry_date']);
             $data->addIndex(['cancel_expiry_date']);
             $data->addIndex(['partner_portal_id']);
+            $data->addIndex(['referrer']);
         }
 
         if (!$schema->hasTable('portal_stream')) {
@@ -82,6 +84,7 @@ class PortalSchema
 
         $installPortalConf && self::installPortalConf($schema);
         self::update01($schema);
+        self::update02($schema);
     }
 
     public static function installPortalConf(Schema $schema)
@@ -101,6 +104,20 @@ class PortalSchema
         }
     }
 
+    public static function installPortalIntegration(Schema $schema)
+    {
+        if ($schema->hasTable('portal_integration')) {
+            return;
+        }
+
+        $table = $schema->createTable('portal_integration');
+        $table->addColumn('portal_id', 'integer')->setUnsigned(true);
+        $table->addColumn('integration', 'string', ['length' => 45]);
+        $table->setPrimaryKey(['portal_id', 'integration']);
+        $table->addColumn('enabled', 'boolean');
+        $table->addIndex(['integration', 'enabled'], 'idx_integration_enabled');
+    }
+
     public static function update01(Schema $schema)
     {
         if ($schema->hasTable('portal_data')) {
@@ -108,6 +125,17 @@ class PortalSchema
             if (!$portalData->hasColumn('industry')) {
                 $portalData->addColumn('industry', 'string', ['notnull' => false]);
                 $portalData->addIndex(['industry']);
+            }
+        }
+    }
+
+    public static function update02(Schema $schema)
+    {
+        if ($schema->hasTable('portal_data')) {
+            $portalData = $schema->getTable('portal_data');
+            if (!$portalData->hasColumn('referrer')) {
+                $portalData->addColumn('referrer', 'string', ['notnull' => false]);
+                $portalData->addIndex(['referrer']);
             }
         }
     }

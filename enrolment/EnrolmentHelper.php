@@ -192,7 +192,7 @@ class EnrolmentHelper
 
             return [
                 $parentLo = $parentLoId ? $loadLo($parentLoId) : false,
-                $parentEnrolment = $parentLo ? EnrolmentHelper::loadByLoAndProfileId($db, $parentLo->id, $enrolment->profile_id) : false,
+                $parentEnrolment = $parentLo ? EnrolmentHelper::loadByLoProfileAndPortal($db, $parentLo->id, $enrolment->profile_id, $enrolment->taken_instance_id) : false,
             ];
         };
         $lo = $loadLo($enrolment->lo_id);
@@ -312,9 +312,13 @@ class EnrolmentHelper
         $queue->publish($data, Queue::ENROLMENT_CREATE, ['notify_email' => $notify, $actorIdKey => $assignerId]);
     }
 
-    public static function hasEnrolment(Connection $db, int $loId, int $profileId, int $parentLoId = null)
+    public static function hasEnrolment(Connection $db, int $loId, int $profileId, int $parentLoId = null, int $takenPortalId = null)
     {
-        return static::loadByLoAndProfileId($db, $loId, $profileId, $parentLoId, '1', DB::COL);
+        return (boolean) (
+            $takenPortalId
+                ? static::loadByLoProfileAndPortal($db, $loId, $profileId, $takenPortalId, $parentLoId, '1', DB::COL)
+                : static::loadByLoAndProfileId($db, $loId, $profileId, $parentLoId, '1', DB::COL)
+        );
     }
 
     public static function countUserEnrolment(Connection $db, int $profileId, int $takenInstanceId = null): int
