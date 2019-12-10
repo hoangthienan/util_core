@@ -360,6 +360,39 @@ class EnrolmentHelper
         return null;
     }
 
+    /**
+     * If there is a completion rule and the due date is not set elsewhere by admin, users have that due date attached.
+     * If there is a completion rule but the admin sets a due date via a group, it should be overwritten for users in that group.
+     * On top of the above, if a user is separately assigned by admin, that will overwrite the group due date / completion rule date).
+     * @param \Doctrine\DBAL\Connection $db
+     * @param int                       $enrolmentId
+     * @return array
+     */
+    public static function getDueDateAndPlanType(Connection $db, int $enrolmentId): array
+    {
+        $edges = EdgeHelper::edgesFromSources($db, [$enrolmentId], [EdgeTypes::HAS_PLAN]);
+        $dueDate = null;
+        $planType = null;
+        if ($edges) {
+            foreach ($edges as $edge) {
+                if ($edge && ($plan = PlanHelper::load($db, $edge->target_id))) {
+                    if ($plan->due_date && (PlanTypes::ASSIGN == $plan->type)) {
+                        $dueDate = DateTime::create($plan->due_date);
+                        $planType = $plan->type;
+                        break;
+                    }
+
+                    if ($plan->due_date) {
+                        $dueDate = DateTime::create($plan->due_date);
+                        $planType = $plan->type;
+                    }
+                }
+            }
+        }
+
+        return [$dueDate, $planType];
+    }
+
     public static function loadUserEnrolment(Connection $db, int $portalId, int $profileId, int $loId, int $parentEnrolmentId = null): ?Enrolment
     {
         $q = $db
