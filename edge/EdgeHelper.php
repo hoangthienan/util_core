@@ -8,6 +8,7 @@ use go1\clients\MqClient;
 use go1\util\DB;
 use go1\util\model\Edge;
 use go1\util\queue\Queue;
+use stdClass;
 
 class EdgeHelper
 {
@@ -27,6 +28,7 @@ class EdgeHelper
             $edge->original = clone $edge;
             $oldType = $edge->type;
 
+            $edge->data = $edge->data ?: new stdClass();
             if (isset($edge->data->oldType)) {
                 $edge->data->oldType->{$oldType} = time();
             } else {
