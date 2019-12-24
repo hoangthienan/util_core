@@ -434,4 +434,48 @@ class PortalCheckerTest extends UtilCoreTestCase
         $this->assertFalse($portalChecker->isLegacy($portal));
         $this->assertTrue($portalChecker->allowNotifyEnrolment($portal));
     }
+
+    public function dataForAvailablePortalContent()
+    {
+        return [
+            [['free'], 1, true],
+            [['free', 'subscribe'], 1, true],
+            [['free', 'subscribe', 'paid'], 1, true],
+            [['free', 'subscribe', 'paid', 'custom_share'], 1, true],
+            [['subscribe'], 1, true],
+            [['subscribe', 'paid'], 1, true],
+            [['subscribe', 'paid', 'custom_share'], 1, true],
+            [['paid'], 1, true],
+            [['paid', 'custom_share'], 1, true],
+            [['custom_share'], 1, false],
+            [['free'], 0, false],
+            [['paid'], 0, false],
+            [['free', 'paid'], 0, false],
+        ];
+    }
+
+    /** @dataProvider dataForAvailablePortalContent */
+    public function testSelectedContentSelections(array $collections, int $allowMarketplace, bool $expected)
+    {
+        $dataPortal = [
+            'data'  => [
+                'files'         => ['logo' => 'http://portal.png'],
+                'configuration' => ['foo' => '{"foo":"bar"}', 'collections' => $collections],
+                'features'      => ['marketplace' => $allowMarketplace],
+            ],
+            'title' => 'daitest.mygo1.com',
+        ];
+        $portalId = $this->createPortal($this->go1, $dataPortal);
+        $portal = PortalHelper::load($this->go1, $portalId);
+        $this->assertEquals($expected, PortalChecker::selectedContentSelections($portal));
+    }
+
+    public function testBuildLinkForQA()
+    {
+        putenv("ENV_HOSTNAME_QA=qa.go1.cloud");
+        $instanceId = $this->createPortal($this->go1, ['title' => 'qa.go1.cloud']);
+        $portal = PortalHelper::load($this->go1, $instanceId);
+
+        $this->assertEquals('https://qa.go1.cloud/p/#/', (new PortalChecker)->buildLink($portal, '', ''));
+    }
 }

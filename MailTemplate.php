@@ -78,6 +78,29 @@ class MailTemplate
         ],
     ];
 
+    const USER_EMAIL_CHANGED = [
+        'key'    => 'user.email.changed',
+        'tokens' => [
+            '!user_first_name' => 'User first name',
+            '!user_mail'       => 'User mail.',
+            '!previous_mail'   => 'Previous user mail',
+            '!portal_name'     => 'Portal name.',
+            '!portal_image'    => 'Portal logo.',
+            '!portal_url'      => 'Portal URL.',
+        ],
+    ];
+
+    const USER_EMAIL_UPDATED = [
+        'key'    => 'user.email.updated',
+        'tokens' => [
+            '!user_first_name' => 'User first name',
+            '!user_mail'       => 'User mail.',
+            '!portal_name'     => 'Portal name.',
+            '!portal_image'    => 'Portal logo.',
+            '!portal_url'      => 'Portal URL.',
+        ],
+    ];
+
     const USER_ONETIME_LOGIN = [
         'key'    => 'user.onetime-login',
         'tokens' => [/* @TODO */],
@@ -883,40 +906,42 @@ class MailTemplate
     const REMIND_LEARNER_EVENT_ON_START_DATE = [
         'key'    => 'remind.learner.event-on-start-date',
         'tokens' => [
-            '!event_name'         => 'Event name',
-            '!event_start_date'   => 'Event start date',
-            '!event_start_time'   => 'Event start time',
-            '!event_end_date'     => 'Event end date',
-            '!event_end_time'     => 'Event end time',
-            '!event_address'      => 'Event address',
-            '!learner_first_name' => 'Learner first name',
-            '!course_name'        => 'Course name',
-            '!course_url'         => 'Course URL',
-            '!learner_mail'       => 'Learner mail',
-            '!view_detail_url'    => 'View detail url',
-            '!portal_name'        => 'Portal name',
-            '!portal_image'       => 'Portal image',
-            '!portal_url'         => 'Portal URL',
+            '!event_session_content' => 'Event sessions',
+            '!event_name'            => 'Event name',
+            '!event_start_date'      => 'Event start date',
+            '!event_start_time'      => 'Event start time',
+            '!event_end_date'        => 'Event end date',
+            '!event_end_time'        => 'Event end time',
+            '!event_address'         => 'Event address',
+            '!learner_first_name'    => 'Learner first name',
+            '!course_name'           => 'Course name',
+            '!course_url'            => 'Course URL',
+            '!learner_mail'          => 'Learner mail',
+            '!view_detail_url'       => 'View detail url',
+            '!portal_name'           => 'Portal name',
+            '!portal_image'          => 'Portal image',
+            '!portal_url'            => 'Portal URL',
         ],
     ];
 
     const REMIND_LEARNER_EVENT_UPCOMING = [
         'key'    => 'remind.learner.event-upcoming',
         'tokens' => [
-            '!event_name'         => 'Event name',
-            '!event_start_date'   => 'Event start date',
-            '!event_start_time'   => 'Event start time',
-            '!event_end_date'     => 'Event end date',
-            '!event_end_time'     => 'Event end time',
-            '!event_address'      => 'Event address',
-            '!learner_first_name' => 'Learner first name',
-            '!course_name'        => 'Course name',
-            '!course_url'         => 'Course URL',
-            '!learner_mail'       => 'Learner mail',
-            '!view_detail_url'    => 'View detail url',
-            '!portal_name'        => 'Portal name',
-            '!portal_image'       => 'Portal image',
-            '!portal_url'         => 'Portal URL',
+            '!event_session_content' => 'Event sessions',
+            '!event_name'            => 'Event name',
+            '!event_start_date'      => 'Event start date',
+            '!event_start_time'      => 'Event start time',
+            '!event_end_date'        => 'Event end date',
+            '!event_end_time'        => 'Event end time',
+            '!event_address'         => 'Event address',
+            '!learner_first_name'    => 'Learner first name',
+            '!course_name'           => 'Course name',
+            '!course_url'            => 'Course URL',
+            '!learner_mail'          => 'Learner mail',
+            '!view_detail_url'       => 'View detail url',
+            '!portal_name'           => 'Portal name',
+            '!portal_image'          => 'Portal image',
+            '!portal_url'            => 'Portal URL',
         ],
     ];
 
@@ -1348,6 +1373,7 @@ class MailTemplate
             '!site_name'       => 'Human name of the portal.', //deprecated
             '!portal_url'      => 'Portal URL',
             '!primary_domain'  => 'Primary domain of portal.',
+            '!onetime_url'     => 'Onetime login link.',
         ]
     ];
 

@@ -90,6 +90,18 @@ class Schema
 
     const BODY = [
         'mappings' => self::MAPPING,
+        'settings' => self::SETTINGS,
+    ];
+
+    const SETTINGS = [
+        'analysis' => [
+            'normalizer' => [
+                'lowercase' => [
+                    'type' => 'custom',
+                    'filter' => ['lowercase']
+                ]
+            ]
+        ]
     ];
 
     const MAPPING = [
@@ -130,6 +142,18 @@ class Schema
         ],
     ];
 
+    const ANALYZED_AND_NORMALIZED = [
+        'fields' => [
+            'analyzed' => [
+                'type' => self::T_TEXT,
+            ],
+            'normalized' => [
+                'type' => self::T_KEYWORD,
+                'normalizer' => 'lowercase'
+            ]
+        ],
+    ];
+
     const EDGE_MAPPING = [
         'properties' => [
             'id'        => ['type' => self::T_KEYWORD],
@@ -159,8 +183,8 @@ class Schema
             'locale'          => ['type' => self::T_KEYWORD],
             'title'           => ['type' => self::T_KEYWORD] + self::ANALYZED,
             'description'     => ['type' => self::T_TEXT],
-            'tags'            => ['type' => self::T_KEYWORD] + self::ANALYZED,
-            'custom_tags'     => ['type' => self::T_KEYWORD] + self::ANALYZED,
+            'tags'            => ['type' => self::T_KEYWORD] + self::ANALYZED_AND_NORMALIZED,
+            'custom_tags'     => ['type' => self::T_KEYWORD] + self::ANALYZED_AND_NORMALIZED,
             'image'           => ['type' => self::T_TEXT],
             'quantity'        => ['type' => self::T_DOUBLE],
             'collection_id'   => ['type' => self::T_INT],
@@ -440,7 +464,6 @@ class Schema
 
     const ENROLMENT_MAPPING_REVISION = [
         '_routing'   => ['required' => true],
-        '_parent'    => ['type' => self::O_ENROLMENT],
         'properties' => [
             'id'                  => ['type' => self::T_KEYWORD],
             'user_id'             => ['type' => self::T_INT],
@@ -726,7 +749,6 @@ class Schema
 
     const EVENT_MAPPING = [
         '_routing'   => ['required' => true],
-        '_parent'    => ['type' => self::O_LO],
         'properties' => self::EVENT_PROPERTIES + [
                 'parent'   => [
                     'properties' => self::LO_MAPPING['properties'],

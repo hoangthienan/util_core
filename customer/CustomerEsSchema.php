@@ -6,7 +6,7 @@ use go1\util\es\Schema;
 
 class CustomerEsSchema
 {
-    const INDEX     = ES_INDEX.'_customer';
+    const INDEX     = ES_INDEX . '_customer';
     const O_PORTAL  = 'portal';
     const O_USER    = 'user';
     const O_ACCOUNT = 'account';
@@ -23,7 +23,7 @@ class CustomerEsSchema
             'id'                => ['type' => Schema::T_KEYWORD],
             'title'             => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
             'status'            => ['type' => Schema::T_SHORT],
-            'name'              => ['type' => Schema::T_KEYWORD],
+            'name'              => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED_AND_NORMALIZED,
             'version'           => ['type' => Schema::T_KEYWORD],
             'created'           => ['type' => Schema::T_DATE],
             'configuration'     => ['type' => Schema::T_OBJECT],
@@ -47,23 +47,23 @@ class CustomerEsSchema
             ],
         ],
     ];
-
     const USER_MAPPING = [
         'properties' => [
-            'id'           => ['type' => Schema::T_KEYWORD],
-            'profile_id'   => ['type' => Schema::T_INT],
-            'mail'         => ['type' => Schema::T_KEYWORD],
-            'name'         => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
-            'first_name'   => ['type' => Schema::T_KEYWORD],
-            'last_name'    => ['type' => Schema::T_KEYWORD],
-            'created'      => ['type' => Schema::T_DATE],
-            'login'        => ['type' => Schema::T_DATE],
-            'access'       => ['type' => Schema::T_DATE],
-            'status'       => ['type' => Schema::T_SHORT],
-            'allow_public' => ['type' => Schema::T_INT],
-            'avatar'       => ['type' => Schema::T_TEXT],
-            'roles'        => ['type' => Schema::T_KEYWORD],
-            'timestamp'    => ['type' => Schema::T_DATE],
+            'id'                     => ['type' => Schema::T_KEYWORD],
+            'profile_id'             => ['type' => Schema::T_INT],
+            'mail'                   => ['type' => Schema::T_KEYWORD],
+            'name'                   => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED_AND_NORMALIZED,
+            'first_name'             => ['type' => Schema::T_KEYWORD],
+            'last_name'              => ['type' => Schema::T_KEYWORD],
+            'created'                => ['type' => Schema::T_DATE],
+            'login'                  => ['type' => Schema::T_DATE],
+            'access'                 => ['type' => Schema::T_DATE],
+            'status'                 => ['type' => Schema::T_SHORT],
+            'allow_public'           => ['type' => Schema::T_INT],
+            'avatar'                 => ['type' => Schema::T_TEXT],
+            'roles'                  => ['type' => Schema::T_KEYWORD],
+            'timestamp'              => ['type' => Schema::T_DATE],
+            'subscribed_product_ids' => ['type' => Schema::T_INT], # @see go1-core/content-subscription-index
         ],
     ];
 
@@ -73,7 +73,7 @@ class CustomerEsSchema
             'id'           => ['type' => Schema::T_KEYWORD],
             'instance'     => ['type' => Schema::T_KEYWORD],
             'mail'         => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
-            'name'         => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+            'name'         => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED_AND_NORMALIZED,
             'first_name'   => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
             'last_name'    => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
             'created'      => ['type' => Schema::T_DATE],
@@ -149,10 +149,10 @@ class CustomerEsSchema
     {
         return [
             'settings' => [
-                'number_of_shards'                 => getenv('ES_SCHEMA_NUMBER_OF_SHARDS') ?: 3,
-                'number_of_replicas'               => getenv('ES_SCHEMA_NUMBER_OF_REPLICAS') ?: 1,
-                'index.mapping.total_fields.limit' => getenv('ES_SCHEMA_LIMIT_TOTAL_FIELDS') ?: 5000,
-            ],
+                    'number_of_shards'                 => getenv('ES_SCHEMA_NUMBER_OF_SHARDS') ?: 3,
+                    'number_of_replicas'               => getenv('ES_SCHEMA_NUMBER_OF_REPLICAS') ?: 1,
+                    'index.mapping.total_fields.limit' => getenv('ES_SCHEMA_LIMIT_TOTAL_FIELDS') ?: 5000,
+                ] + Schema::SETTINGS,
             'mappings' => self::MAPPING,
         ];
     }

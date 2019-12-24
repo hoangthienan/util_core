@@ -191,6 +191,7 @@ class Queue
     const POLICY_ITEM_CREATE            = 'policy.item.create';
     const POLICY_ITEM_UPDATE            = 'policy.item.update';
     const POLICY_ITEM_DELETE            = 'policy.item.delete';
+    const POLICY_ITEM_SYNC              = 'policy.item.sync';
     const PAGEUP_COURSE_UPLOAD          = 'pageup.course.upload';
     const EXIM_TASK_UPDATE              = 'exim.task.update';
     const PURCHASE_REQUEST_CREATE       = 'purchase.request.create';
@@ -203,9 +204,14 @@ class Queue
     const EVENT_LOCATION_UPDATE         = 'event.location.update';
     const EVENT_LOCATION_DELETE         = 'event.location.delete';
     const LI_VIDEO_PROCESS_S3           = 'li_video.process.s3';
+    const LI_AUDIO_PROCESS_S3           = 'li_audio.process.s3';
     const LO_UPDATE_ATTRIBUTES          = 'lo.update.attributes';
     const CONTENT_IMPORT_PROCESS_IMPORT = 'content_import.process.import';
+    const CONTENT_IMPORT_PROCESS_IMPORT_JOB = 'content_import_job.process.import';
     const MARKETPLACE_SCHEDULED_PUBLISH = 'marketplace.scheduled_publish';
+    const MARKETPLACE_SYNC_CHILD        = 'marketplace.sync_child';
+    const MERGE_ACCOUNT_ENROLMENT_REVISION  = 'merge-account.enrolment-revision'; // Change profile_id of enrolment revisions, body: {profile_id, portal_id}
+
 
     /**
      * @deprecated
@@ -243,7 +249,7 @@ class Queue
     const DO_FINDER                            = 'do.finder';
     const DO_PUBLIC_API_WEBHOOK_REQUEST        = 'do.public-api.webhook-request'; # { appId: INT, url: STRING, subject: OBJECT, original: null|OBJECT }
     const DO_MAIL_SEND                         = 'do.mail.send'; # { subject: STRING, body: STRING, html: STRING, context: OBJECT, attachments: STRING[], options: OBJECT }
-    const DO_MAIL_BULK_SEND                    = 'do.mail-bulk.send'; # { subject: STRING, body: STRING, html: STRING, context: OBJECT, attachments: STRING[], options: OBJECT }
+    const DO_MAIL_BULK_SEND                    = 'mail-bulk.send'; # { subject: STRING, body: STRING, html: STRING, context: OBJECT, attachments: STRING[], options: OBJECT }
     const DO_HISTORY_RECORD                    = 'do.history.record';
     const DO_ENROLMENT                         = 'process.enrolment'; # { action: STRING, body: OBJECT }
     const DO_ENROLMENT_CRON                    = 'etc.do.cron'; # { task: STRING }
@@ -275,6 +281,20 @@ class Queue
     const DO_ASSESSOR                          = 'do.assessor'; # { task: string, body: OBJECT }
     const DO_PAGEUP_UPLOAD_COURSE              = 'do.pageup.upload-couse'; # { $portal_id, $course_id }
     const REINDEX_PREFIX                       = 'go1-reindex.';
+
+    /**
+     * TEMPORARY EVENT (will be removed when premium/region restriction propagation is removed
+     *
+     * This event is to enable the marketplace consumer to break up the updating of the learning objects
+     * into manageable groups (of 5000 LOs)
+     *
+     * body = {
+     *      group: OBJECT, // the group object in which the Learning objects are.
+     *      offset: the starting offset in the list of learning objects
+     *      limit: the number of learning objects to process
+     * }
+     */
+    const MARKETPLACE_UPDATE_LO_REGIONS        = 'update.lo.regions';
 
     public static function postEvent(string $event): string
     {

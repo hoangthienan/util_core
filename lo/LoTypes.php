@@ -8,10 +8,12 @@ class LoTypes
     const COURSE          = 'course';
     const MODULE          = 'module';
     const AWARD           = 'award';
+    const GROUP           = 'group';
+    const ACHIEVEMENT     = 'achievement';
 
     public static function all()
     {
-        return [self::LEANING_PATHWAY, self::COURSE, self::MODULE, self::AWARD];
+        return [self::LEANING_PATHWAY, self::COURSE, self::MODULE, self::AWARD, self::GROUP, self::ACHIEVEMENT];
     }
 
     public static function allTheThing()

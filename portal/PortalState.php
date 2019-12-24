@@ -25,7 +25,7 @@ class PortalState
     {
         switch ($state) {
             case self::TRIAL:
-                return 'Demo / Trial';
+                return 'Trial';
 
             case self::ONBOARDING:
                 return 'Onboarding';
@@ -34,7 +34,7 @@ class PortalState
                 return 'Live';
 
             case self::EXPIRED:
-                return 'Expired Demo / Trial';
+                return 'Expired Trial';
 
             case self::SUSPENDED:
                 return 'Suspended';
