@@ -513,4 +513,16 @@ class PortalCheckerTest extends UtilCoreTestCase
         $portal = PortalHelper::load($this->go1, $portalId);
         $this->assertEquals('https://localhost/p/#/app/course-overview/123', (new PortalChecker)->buildLink($portal, 'app/course-overview/123'));
     }
+
+    public function testBuildLinkForLegacy()
+    {
+        putenv("MONOLITH");
+
+        $portalId = $this->createPortal($this->go1, [
+            'title'   => 'az.mygo1.com',
+            'version' => PortalHelper::LEGACY_VERSION,
+        ]);
+        $portal = PortalHelper::load($this->go1, $portalId);
+        $this->assertEquals('https://az.mygo1.com/webapp/#/app/course-overview/123', (new PortalChecker)->buildLink($portal, 'app/course-overview/123'));
+    }
 }
