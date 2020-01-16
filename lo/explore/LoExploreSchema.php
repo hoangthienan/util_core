@@ -60,6 +60,7 @@ class LoExploreSchema
                     'total'    => ['type' => Schema::T_DOUBLE],
                 ],
             ],
+            'duration'        => ['type' => Schema::T_INT], # Duration in minute
             'assessors'       => ['type' => Schema::T_INT],
             'collections'     => ['type' => Schema::T_INT],
             'group'           => [
