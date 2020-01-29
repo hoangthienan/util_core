@@ -4,8 +4,8 @@ namespace go1\util\lo;
 
 class PackageLicenseTypes
 {
-    const SEAT   = 'seat_license';
-    const PORTAL = 'portal_license';
+    const SEAT   = 1;
+    const PORTAL = 2;
 
     public static function all()
     {
