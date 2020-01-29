@@ -68,7 +68,7 @@ trait LoMockTrait
             'id'              => $options['id'] ?? null,
             'type'            => isset($options['type']) ? $options['type'] : LoTypes::COURSE,
             'instance_id'     => $instanceId = isset($options['instance_id']) ? $options['instance_id'] : 0,
-            'remote_id'       => isset($options['remote_id']) ? $options['remote_id'] : $db->fetchColumn('SELECT 1 + MAX(remote_id) FROM gc_lo') ?: 1,
+            'remote_id'       => isset($options['remote_id']) ? $options['remote_id'] : ($db->fetchColumn('SELECT 1 + MAX(remote_id) FROM gc_lo') ?: 1),
             'title'           => isset($options['title']) ? $options['title'] : 'Example course',
             'description'     => isset($options['description']) ? $options['description'] : '…',
             'private'         => isset($options['private']) ? $options['private'] : 0,
@@ -201,7 +201,8 @@ trait LoMockTrait
     }
 
     public function createAttributeLookup(Connection $db, $key, $name, $attributeType, $loType, $required,
-                                          $permission, $defaultValue, $isArray = 0, $dimensionId = null, $validationRegex = null)
+                                          $permission, $defaultValue, $isArray = 0, $dimensionId = null,
+                                          $validationRegex = null, $sortOrder = null)
     {
         $db->insert('gc_lo_attributes_lookup', [
             '`key`'             => $key,
@@ -213,7 +214,8 @@ trait LoMockTrait
             'default_value'     => $defaultValue,
             'is_array'          => $isArray,
             'dimension_id'      => $dimensionId,
-            'validation_regex'  => $validationRegex
+            'validation_regex'  => $validationRegex,
+            'sort_order'        => $sortOrder
         ]);
     }
 

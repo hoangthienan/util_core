@@ -48,6 +48,11 @@ class PortalHelper
         PortalCollectionConfiguration::SHARE,
     ];
 
+    CONST PLAYER_APP_PREFIX = 'play';
+    CONST REACT_APP_PREFIX = 'r';
+    CONST DEFAULT_APP_PREFIX = 'p/#';
+    CONST DEFAULT_WEB_APP = 'webapp/#';
+
     public static function load(Connection $go1, $nameOrId, $columns = '*', bool $aliasSupport = false, bool $includePortalData = false): ?stdClass
     {
         $column = is_numeric($nameOrId) ? 'id' : 'title';

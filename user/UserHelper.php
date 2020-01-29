@@ -325,4 +325,16 @@ class UserHelper
 
         return $results;
     }
+
+    public static function getAccountIds(Connection $db, int $userId): array
+    {
+        $accountIds = $db
+            ->executeQuery(
+                "SELECT target_id FROM gc_ro ro WHERE type = ? AND source_id = ?",
+                [EdgeTypes::HAS_ACCOUNT, $userId]
+            )
+            ->fetchAll(PDO::FETCH_COLUMN);
+
+        return array_map('intval', $accountIds);
+    }
 }
