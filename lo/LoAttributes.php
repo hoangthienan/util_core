@@ -25,6 +25,9 @@ class LoAttributes
     const STRUCTURE_NAVIGATION          = 14;
     const INTEGRATION                   = 15;
     const INTEGRATION_URL               = 16;
+    const INDUSTRY                      = 17;
+    const COMPANY_SIZE                  = 18;
+    const YEAR_CREATED                  = 19;
 
     public static function machineName(int $attribute): ?string
     {
@@ -45,6 +48,9 @@ class LoAttributes
             self::STRUCTURE_NAVIGATION      => 'structure_navigation',
             self::INTEGRATION               => 'integration',
             self::INTEGRATION_URL           => 'integration_url',
+            self::INDUSTRY                  => 'industry',
+            self::COMPANY_SIZE              => 'company_size',
+            self::YEAR_CREATED              => 'year_created'
         ];
 
         return $map[$attribute] ?? null;
