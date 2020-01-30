@@ -204,6 +204,7 @@ class Queue
     const EVENT_LOCATION_UPDATE         = 'event.location.update';
     const EVENT_LOCATION_DELETE         = 'event.location.delete';
     const LI_VIDEO_PROCESS_S3           = 'li_video.process.s3';
+    const LI_AUDIO_PROCESS_S3           = 'li_audio.process.s3';
     const LO_UPDATE_ATTRIBUTES          = 'lo.update.attributes';
     const CONTENT_IMPORT_PROCESS_IMPORT = 'content_import.process.import';
     const CONTENT_IMPORT_PROCESS_IMPORT_JOB = 'content_import_job.process.import';

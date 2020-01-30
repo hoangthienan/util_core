@@ -60,6 +60,7 @@ class LoExploreSchema
                     'total'    => ['type' => Schema::T_DOUBLE],
                 ],
             ],
+            'duration'        => ['type' => Schema::T_INT], # Duration in minute
             'assessors'       => ['type' => Schema::T_INT],
             'collections'     => ['type' => Schema::T_INT],
             'group'           => [
@@ -111,14 +112,44 @@ class LoExploreSchema
                     'audio_visual_design'     => ['type' => Schema::T_INT],
                     'presentation_of_content' => ['type' => Schema::T_INT],
                     'structure_navigation'    => ['type' => Schema::T_INT],
-                    'region_restrictions'     => [
+                    'featured_status'         => ['type' => Schema::T_INT],
+                    'featured_locale'         => ['type' => Schema::T_KEYWORD],
+                    'featured_timestamp'      => ['type' => Schema::T_INT],
+                    'entry_level' => [
+                        'properties'    => [
+                            'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                            'key'       => ['type' => Schema::T_KEYWORD],
+                        ],
+                    ],
+                    'region_restrictions' => [
                         'type'          => Schema::T_NESTED,
                         'properties'    => [
                             'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
                             'key'       => ['type' => Schema::T_KEYWORD],
                         ],
                     ],
-                    'topics'    => [
+                    'topics' => [
+                        'type'          => Schema::T_NESTED,
+                        'properties'    => [
+                            'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                            'key'       => ['type' => Schema::T_KEYWORD],
+                        ],
+                    ],
+                    'locale' => [
+                        'type'          => Schema::T_NESTED,
+                        'properties'    => [
+                            'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                            'key'       => ['type' => Schema::T_KEYWORD],
+                        ],
+                    ],
+                    'region_relevance' => [
+                        'type'          => Schema::T_NESTED,
+                        'properties'    => [
+                            'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                            'key'       => ['type' => Schema::T_KEYWORD],
+                        ],
+                    ],
+                    'industry' => [
                         'type'          => Schema::T_NESTED,
                         'properties'    => [
                             'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
@@ -129,7 +160,7 @@ class LoExploreSchema
                     'provider' => ['type' => Schema::T_KEYWORD],
                 ],
             ],
-            'events'          => [
+            'events'         => [
                 'type'       => Schema::T_NESTED,
                 'properties' => [
                     'id'                       => ['type' => Schema::T_KEYWORD],

@@ -26,6 +26,7 @@ class LiTypes
     const RESOURCE    = 'resource';
     const TEXT        = 'text';
     const VIDEO       = 'video';
+    const AUDIO       = 'audio';
     const WORKSHOP    = 'workshop';
     const LTI         = 'lti';
     const EVENT       = 'event';

@@ -257,6 +257,7 @@ class LoSchema
                 'notnull'  => false,
             ]);
             $attr->addColumn('validation_regex', 'string', ['notnull'  => false ]);
+            $attr->addColumn('sort_order', 'integer', ['notnull'  => false ]);
             $attr->setPrimaryKey(['id']);
         }
 

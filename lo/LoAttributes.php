@@ -28,6 +28,13 @@ class LoAttributes
     const INDUSTRY                      = 17;
     const COMPANY_SIZE                  = 18;
     const YEAR_CREATED                  = 19;
+    const FEATURED_STATUS               = 20;
+    const FEATURED_LOCALE               = 21;
+    const FEATURED_TIMESTAMP            = 22;
+    const ENTRY_LEVEL                   = 23;
+    const LOCALE                        = 24;
+    const REGION_RELEVANCE              = 25;
+    const CHECK_URL                     = 26;
 
     public static function machineName(int $attribute): ?string
     {
@@ -50,7 +57,14 @@ class LoAttributes
             self::INTEGRATION_URL           => 'integration_url',
             self::INDUSTRY                  => 'industry',
             self::COMPANY_SIZE              => 'company_size',
-            self::YEAR_CREATED              => 'year_created'
+            self::YEAR_CREATED              => 'year_created',
+            self::FEATURED_STATUS           => 'featured_status',
+            self::FEATURED_LOCALE           => 'featured_locale',
+            self::FEATURED_TIMESTAMP        => 'featured_timestamp',
+            self::ENTRY_LEVEL               => 'entry_level',
+            self::LOCALE                    => 'locale',
+            self::REGION_RELEVANCE          => 'region_relevance',
+            self::CHECK_URL                 => 'check_url'
         ];
 
         return $map[$attribute] ?? null;
