@@ -161,7 +161,7 @@ class PortalChecker
                 break;
 
             case 'staging':
-                $domain = PortalHelper::WEBSITE_STAGING_INSTANCE;
+                $domain = getenv('ENV_HOSTNAME_QA') ?: PortalHelper::WEBSITE_STAGING_INSTANCE;
                 break;
 
             case 'qa':
