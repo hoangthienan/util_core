@@ -161,6 +161,8 @@ class PortalChecker
                 break;
 
             case 'staging':
+                // Supporting `ENV_HOSTNAME_QA` for keeping other places logic working as previously on staging
+                // @TODO provide a variable env to set for $domain, not switching cases base on `ENV` env
                 $domain = getenv('ENV_HOSTNAME_QA') ?: PortalHelper::WEBSITE_STAGING_INSTANCE;
                 break;
 
