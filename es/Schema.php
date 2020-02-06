@@ -831,7 +831,7 @@ class Schema
         'properties' => [
             'id'          => ['type' => self::T_KEYWORD],
             'revision_id' => ['type' => self::T_INT],
-            'title'       => ['type' => self::T_KEYWORD],
+            'title'       => ['type' => self::T_KEYWORD] + self::ANALYZED,
             'description' => ['type' => self::T_TEXT],
             'image'       => ['type' => self::T_TEXT],
             'user_id'     => ['type' => self::T_INT],
