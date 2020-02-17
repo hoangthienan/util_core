@@ -32,9 +32,10 @@ class LoSchema
             $lo->addColumn('data', 'blob');
             $lo->addColumn('created', 'integer');
             $lo->addColumn('updated', 'integer', ['notnull' => false]);
+            $lo->addColumn('removed_at', 'integer', ['notnull' => false]);
             $lo->addColumn('sharing', 'smallint');
             $lo->addColumn('premium', 'integer', ['unsigned' => true, 'notnull' => true, 'default' => 0]);
-            $lo->addColumn('summary', 'text', ['notnull' => false ]);
+            $lo->addColumn('summary', 'text', ['notnull' => false]);
 
             $lo->setPrimaryKey(['id']);
             $lo->addIndex(['type']);
@@ -48,11 +49,18 @@ class LoSchema
             $lo->addIndex(['timestamp']);
             $lo->addIndex(['created']);
             $lo->addIndex(['updated']);
+            $lo->addIndex(['removed_at']);
             $lo->addIndex(['sharing']);
             $lo->addIndex(['enrolment_count']);
             $lo->addIndex(['tags']);
             $lo->addIndex(['locale']);
             $lo->addUniqueIndex(['instance_id', 'type', 'remote_id']);
+        } else {
+            $lo = $schema->getTable('gc_lo');
+            if (!$lo->hasColumn('removed_at')) {
+                $lo->addColumn('removed_at', Type::INTEGER, ['notnull' => false]);
+                $lo->addIndex(['removed_at']);
+            }
         }
 
         if (!$schema->hasTable('gc_lo_pricing')) {
