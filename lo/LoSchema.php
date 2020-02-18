@@ -32,6 +32,7 @@ class LoSchema
             $lo->addColumn('data', 'blob');
             $lo->addColumn('created', 'integer');
             $lo->addColumn('updated', 'integer', ['notnull' => false]);
+            $lo->addColumn('decommissioned_at', 'integer', ['notnull' => false]);
             $lo->addColumn('removed_at', 'integer', ['notnull' => false]);
             $lo->addColumn('sharing', 'smallint');
             $lo->addColumn('premium', 'integer', ['unsigned' => true, 'notnull' => true, 'default' => 0]);
@@ -49,6 +50,7 @@ class LoSchema
             $lo->addIndex(['timestamp']);
             $lo->addIndex(['created']);
             $lo->addIndex(['updated']);
+            $lo->addIndex(['decommissioned_at']);
             $lo->addIndex(['removed_at']);
             $lo->addIndex(['sharing']);
             $lo->addIndex(['enrolment_count']);
@@ -57,6 +59,12 @@ class LoSchema
             $lo->addUniqueIndex(['instance_id', 'type', 'remote_id']);
         } else {
             $lo = $schema->getTable('gc_lo');
+
+            if (!$lo->hasColumn('decommissioned_at')) {
+                $lo->addColumn('decommissioned_at', Type::INTEGER, ['notnull' => false]);
+                $lo->addIndex(['decommissioned_at']);
+            }
+
             if (!$lo->hasColumn('removed_at')) {
                 $lo->addColumn('removed_at', Type::INTEGER, ['notnull' => false]);
                 $lo->addIndex(['removed_at']);
@@ -257,15 +265,15 @@ class LoSchema
             $attr->addColumn('default_value', 'string', ['notnull' => false]);
             $attr->addColumn('is_array', 'smallint', [
                 'unsigned' => true,
-                'notnull' => false,
-                'default' => 0,
+                'notnull'  => false,
+                'default'  => 0,
             ]);
             $attr->addColumn('dimension_id', 'integer', [
                 'unsigned' => true,
                 'notnull'  => false,
             ]);
-            $attr->addColumn('validation_regex', 'string', ['notnull'  => false ]);
-            $attr->addColumn('sort_order', 'integer', ['notnull'  => false ]);
+            $attr->addColumn('validation_regex', 'string', ['notnull' => false]);
+            $attr->addColumn('sort_order', 'integer', ['notnull' => false]);
             $attr->setPrimaryKey(['id']);
         }
 
@@ -279,7 +287,7 @@ class LoSchema
                     $indexed = true;
                 }
             }
-            
+
             if (!$indexed) {
                 $lo->addIndex(['origin_id']);
             }
