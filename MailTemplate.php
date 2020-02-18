@@ -3,6 +3,7 @@
 namespace go1\util;
 
 use go1\util\content_import\ContentImportCompleteCreate;
+use go1\util\content_job\ContentJobContentDownloadCompleteCreate;
 use InvalidArgumentException;
 use ReflectionClass;
 use go1\util\queue\Queue;
