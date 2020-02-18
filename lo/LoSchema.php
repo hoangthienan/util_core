@@ -56,6 +56,7 @@ class LoSchema
             $lo->addIndex(['enrolment_count']);
             $lo->addIndex(['tags']);
             $lo->addIndex(['locale']);
+            $lo->addIndex(['remote_id']);
             $lo->addUniqueIndex(['instance_id', 'type', 'remote_id']);
         } else {
             $lo = $schema->getTable('gc_lo');
@@ -281,15 +282,24 @@ class LoSchema
         if ($schema->hasTable('gc_lo')) {
             $lo = $schema->getTable('gc_lo');
 
-            $indexed = false;
+            $indexedOriginId = false;
+            $indexedRemoteId = false;
             foreach ($lo->getIndexes() as $index) {
                 if (['origin_id'] == $index->getColumns()) {
-                    $indexed = true;
+                    $indexedOriginId = true;
+                }
+
+                if (['remote_id'] == $index->getColumns()) {
+                    $indexedRemoteId = true;
                 }
             }
 
-            if (!$indexed) {
+            if (!$indexedOriginId) {
                 $lo->addIndex(['origin_id']);
+            }
+
+            if (!$indexedRemoteId) {
+                $lo->addIndex(['remote_id']);
             }
         }
     }

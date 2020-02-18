@@ -2,6 +2,7 @@
 
 namespace go1\util\tests;
 
+use Firebase\JWT\JWT;
 use go1\util\edge\EdgeTypes;
 use go1\util\schema\mock\PortalMockTrait;
 use go1\util\schema\mock\UserMockTrait;
@@ -218,5 +219,46 @@ class UserHelperTest extends UtilCoreTestCase
         $user = UserHelper::loadMultiple($this->go1, [$uId1, $uId2], 'id, mail');
         $this->assertEquals((object) ['id' => $uId1, 'mail' => 'foo@bar.baz'], $user[0]);
         $this->assertEquals((object) ['id' => $uId2, 'mail' => 'foo@bar.qux'], $user[1]);
+    }
+
+    public function testPortalJWT()
+    {
+        $portal = (object)[
+            'title' => 'qa.go1.co',
+            'id'    => 30
+        ];
+        $jwt = UserHelper::getPortalJWT($portal);
+        $payload = JWT::decode($jwt, 'INTERNAL', ['HS256']);
+        $expectedPayload = (object)[
+            'iss'    => 'go1.user',
+            'ver'    => '1.0',
+            'exp'    => strtotime('+ 1 month'),
+            'object' =>
+                (object)[
+                    'type'    => 'user',
+                    'content' =>
+                        (object)[
+                            'id'         => 1,
+                            'profile_id' => 1,
+                            'mail'       => 'user.0@qa.go1.co',
+                            'name'       => 'public',
+                            'accounts'   =>
+                                [
+                                    (object)[
+                                        'id'         => 1,
+                                        'profile_id' => 1,
+                                        'instance'   => 'qa.go1.co',
+                                        'portal_id'  => 30,
+                                        'name'       => 'public',
+                                        'roles'      =>
+                                            [
+                                                'Student',
+                                            ],
+                                    ],
+                                ],
+                        ],
+                ],
+        ];
+        $this->assertEquals($expectedPayload, $payload);
     }
 }

@@ -39,6 +39,7 @@ class LoCreateEventEmbedderTest extends UtilCoreTestCase
         $this->eventLiId = $this->createLO($this->go1, ['instance_id' => $this->portalId, 'type' => 'event']);
         $this->link($this->go1, EdgeTypes::HAS_MODULE, $this->courseId, $this->moduleId);
         $this->link($this->go1, EdgeTypes::HAS_LI, $this->moduleId, $this->eventLiId);
+        $this->link($this->go1, EdgeTypes::HAS_AUTHOR_EDGE, $this->eventLiId, $this->userId);
     }
 
     public function test()
@@ -53,5 +54,7 @@ class LoCreateEventEmbedderTest extends UtilCoreTestCase
         $this->assertEquals('qa.mygo1.com', $embedded['portal']->title);
         $this->assertEquals('A', $embedded['jwt']['user']->first_name);
         $this->assertEquals('T', $embedded['jwt']['user']->last_name);
+        $this->assertEquals('A', $embedded['authors'][0]->first_name);
+        $this->assertEquals('T', $embedded['authors'][0]->last_name);
     }
 }

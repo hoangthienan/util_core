@@ -525,4 +525,25 @@ class PortalCheckerTest extends UtilCoreTestCase
         $portal = PortalHelper::load($this->go1, $portalId);
         $this->assertEquals('https://az.mygo1.com/webapp/#/app/course-overview/123', (new PortalChecker)->buildLink($portal, 'app/course-overview/123'));
     }
+
+    public function dataBuildLinkHostNameQA()
+    {
+        return [
+            ['ENV=qa', 'ENV_HOSTNAME_QA=qa.go1.cloud', 'https://qa.go1.cloud/p/#/'],
+            ['ENV=staging', 'ENV_HOSTNAME_QA=qa.mygo1.com', 'https://qa.mygo1.com/p/#/'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataBuildLinkHostNameQA
+     */
+    public function testBuildLinkForHostNameQA($env, $hostName, $expected)
+    {
+        putenv($env);
+        putenv($hostName);
+        $portalId = $this->createPortal($this->go1, ['title' => 'staging.mygo1.com']);
+        $portal = PortalHelper::load($this->go1, $portalId);
+
+        $this->assertEquals($expected, (new PortalChecker)->buildLink($portal, '', 'p/#'));
+    }
 }

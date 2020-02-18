@@ -3,6 +3,7 @@
 namespace go1\util;
 
 use go1\util\content_import\ContentImportCompleteCreate;
+use go1\util\content_job\ContentJobContentDownloadCompleteCreate;
 use InvalidArgumentException;
 use ReflectionClass;
 use go1\util\queue\Queue;
@@ -1391,6 +1392,20 @@ class MailTemplate
             '!success_count' => 'Success Count',
             '!failed_count' => 'Failed count',
             '!portal' => "Portal name",
+            '!user_mail' => 'User email',
+        ]
+    ];
+
+    public const CONTENT_JOB_CONTENT_DOWNLOAD_COMPLETE = [
+        'key'    => ContentJobContentDownloadCompleteCreate::ROUTING_KEY,
+        'tokens' => [
+            '!user_first_name'   => 'User first name',
+            '!content_job_status' => 'Content job status',
+            '!processed_count' => 'Total processed count, which is successCount + failedCount',
+            '!success_count' => 'Success Count',
+            '!failed_count' => 'Failed count',
+            '!portal' => "Portal name",
+            '!csv_download_link' => 'Csv download link',
             '!user_mail' => 'User email',
         ]
     ];

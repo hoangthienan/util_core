@@ -337,4 +337,34 @@ class UserHelper
 
         return array_map('intval', $accountIds);
     }
+
+    public static function getPortalJWT(stdClass $portal): string
+    {
+        $payload = [
+            'iss'    => 'go1.user',
+            'ver'    => '1.0',
+            'exp'    => strtotime('+ 1 month'),
+            'object' => [
+                'type'    => 'user',
+                'content' => [
+                    'id'         => 1,
+                    'profile_id' => 1,
+                    'mail'       => "user.0@{$portal->title}",
+                    'name'       => 'public',
+                    'accounts'   => [
+                        [
+                            'id'         => 1,
+                            'profile_id' => 1,
+                            'instance'   => $portal->title,
+                            'portal_id'  => (int)$portal->id,
+                            'name'       => 'public',
+                            'roles'      => [Roles::STUDENT]
+                        ]
+                    ]
+                ],
+            ],
+        ];
+
+        return JWT::encode($payload, 'INTERNAL');
+    }
 }
