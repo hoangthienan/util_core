@@ -10,6 +10,9 @@ class LoSchema
     public static function install(Schema $schema)
     {
         if (!$schema->hasTable('gc_lo')) {
+            # @deprecated
+            # data.single_li
+
             $lo = $schema->createTable('gc_lo');
             $lo->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
             $lo->addColumn('type', 'string');
@@ -34,6 +37,7 @@ class LoSchema
             $lo->addColumn('updated', 'integer', ['notnull' => false]);
             $lo->addColumn('sharing', 'smallint');
             $lo->addColumn('premium', 'integer', ['unsigned' => true, 'notnull' => true, 'default' => 0]);
+            $lo->addColumn('single_li', Type::BOOLEAN, ['notnull' => true, 'default' => 0]);
             $lo->addColumn('summary', 'text', ['notnull' => false ]);
 
             $lo->setPrimaryKey(['id']);
@@ -53,6 +57,7 @@ class LoSchema
             $lo->addIndex(['tags']);
             $lo->addIndex(['locale']);
             $lo->addIndex(['remote_id']);
+            $lo->addIndex(['single_li']);
             $lo->addUniqueIndex(['instance_id', 'type', 'remote_id']);
         }
 
@@ -284,6 +289,11 @@ class LoSchema
 
             if (!$indexedRemoteId) {
                 $lo->addIndex(['remote_id']);
+            }
+
+            if (!$lo->hasColumn('single_li')) {
+                $lo->addColumn('single_li', Type::BOOLEAN, ['notnull' => true, 'default' => 0]);
+                $lo->addIndex(['single_li']);
             }
         }
     }
