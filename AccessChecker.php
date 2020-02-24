@@ -123,6 +123,13 @@ class AccessChecker
         return false;
     }
 
+    public function sessionToken(Request $req): ?string
+    {
+        $payload = $req->attributes->get('jwt.payload');
+
+        return $payload->sid ?? null;
+    }
+
     public function validUser(Request $req, $portalName = null, Connection $db = null)
     {
         $payload = $req->attributes->get('jwt.payload');

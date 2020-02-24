@@ -89,12 +89,13 @@ trait UserMockTrait
     }
 
     # NOTE: This is not yet stable, JWT is large, not good for production usage.
-    public function jwtForUser(Connection $db, int $userId, string $portalName = null): string
+    public function jwtForUser(Connection $db, int $userId, string $portalName = null, string $sid = null): string
     {
         $payload = [
             'iss'    => 'go1.user',
             'ver'    => '1.1',
             'exp'    => strtotime('+ 1 year'),
+            'sid'    => $sid,
             'object' => (object) [
                 'type'    => 'user',
                 'content' => call_user_func(
