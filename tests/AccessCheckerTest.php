@@ -119,4 +119,16 @@ class AccessCheckerTest extends UtilCoreTestCase
         $this->assertTrue((bool) $accessChecker->isContentAdministrator($req, $portalName));
         $this->assertTrue((bool) $accessChecker->isContentAdministrator($req, $portalName, Roles::ADMIN, false));
     }
+
+    public function testGetAccessToken()
+    {
+        $sessionToken = '2235e435f2015211bb1e633a677a690844a0cc55aec409fb1aa84f9210a96373271d2fda1e62cd96192bec475cd664103a6edadd508276880b9db3bd5c992199';
+
+        $req = new Request;
+        $accessChecker = new AccessChecker;
+        $this->assertNull($accessChecker->sessionToken($req));
+
+        $req->attributes->set('jwt.payload', (object)['sid' => $sessionToken]);
+        $this->assertEquals($sessionToken, $accessChecker->sessionToken($req));
+    }
 }
