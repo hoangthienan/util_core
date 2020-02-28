@@ -108,6 +108,7 @@ class EdgeTypes
     const HAS_SUGGESTED_COMPLETION    = 44; # T: 0                    | S: gc_ro.id              | data: { KEY: VALUE }
     const AWARD_ASSESSOR              = 45; # T: Account              | S: award.id
     const GROUP_HAS_ITEM              = 46; # T: Learning object      | S: Learning object (group lo only)
+    const PLAYLIST_HAS_ITEM           = 47; # T: LO                   | S: playlist.
 
     # LO & enrolment scheduling
     # ---------------------

@@ -10,10 +10,11 @@ class LoTypes
     const AWARD           = 'award';
     const GROUP           = 'group';
     const ACHIEVEMENT     = 'achievement';
+    const PLAYLIST        = 'playlist';
 
     public static function all()
     {
-        return [self::LEANING_PATHWAY, self::COURSE, self::MODULE, self::AWARD, self::GROUP, self::ACHIEVEMENT];
+        return [self::LEANING_PATHWAY, self::COURSE, self::MODULE, self::AWARD, self::GROUP, self::ACHIEVEMENT, self::PLAYLIST];
     }
 
     public static function allTheThing()
