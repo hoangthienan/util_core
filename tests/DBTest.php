@@ -193,7 +193,7 @@ class DBTest extends UtilCoreTestCase
         putenv('FOO_DB_HOST=foo.com');
 
         $o = DB::connectionPoolOptions('foo', false, true, MockPDO::class);
-        $this->assertEquals('mysql:host=foo.com;dbname=foo_db', $o['pdo']->dsn);
+        $this->assertEquals('mysql:host=foo.com;dbname=foo_db;port=3306', $o['pdo']->dsn);
         $this->assertEquals('foo_username', $o['pdo']->username);
         $this->assertEquals('foo_password', $o['pdo']->password);
         $this->assertEquals([

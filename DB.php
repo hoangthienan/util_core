@@ -59,7 +59,7 @@ class DB
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
             PDO::ATTR_PERSISTENT         => true
         ];
-        $o['pdo'] = new $pdo("mysql:host={$o['host']};dbname={$o['dbname']}", $o['user'], $o['password'], $pdoOpions);
+        $o['pdo'] = new $pdo("mysql:host={$o['host']};dbname={$o['dbname']};port={$o['port']}", $o['user'], $o['password'], $pdoOpions);
 
         return $o;
     }
