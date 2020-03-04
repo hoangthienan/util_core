@@ -35,6 +35,8 @@ class LoAttributes
     const LOCALE                        = 24;
     const REGION_RELEVANCE              = 25;
     const CHECK_URL                     = 26;
+    const ROLES                         = 27;
+    const SKILLS                        = 28;
 
     public static function machineName(int $attribute): ?string
     {
@@ -64,7 +66,9 @@ class LoAttributes
             self::ENTRY_LEVEL               => 'entry_level',
             self::LOCALE                    => 'locale',
             self::REGION_RELEVANCE          => 'region_relevance',
-            self::CHECK_URL                 => 'check_url'
+            self::CHECK_URL                 => 'check_url',
+            self::ROLES                     => 'roles',
+            self::SKILLS                    => 'skills',
         ];
 
         return $map[$attribute] ?? null;

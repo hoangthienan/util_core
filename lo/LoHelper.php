@@ -508,10 +508,12 @@ class LoHelper
         return [];
     }
 
-    public static function isSingleLi(stdClass $lo)
+    public static function isSingleLi(stdClass $lo): bool
     {
+        $isSingleLi = $lo->single_li ?? $lo->data->{self::SINGLE_LI} ?? false;
+
         return in_array($lo->type, LiTypes::all())
-            ? boolval($lo->data->{self::SINGLE_LI} ?? false)
+            ? boolval($isSingleLi)
             : false;
     }
 

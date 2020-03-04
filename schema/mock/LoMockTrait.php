@@ -55,6 +55,8 @@ trait LoMockTrait
         }
 
         $options['data'] = isset($options['data']) ? (is_scalar($options['data']) ? json_decode($options['data'], true) : $options['data']) : [];
+        $singleLi = $options['single_li'] ?? $options['data']['single_li'] ?? false;
+
         if (!isset($options['data'][LoHelper::ENROLMENT_RE_ENROL])) {
             $options['data'][LoHelper::ENROLMENT_RE_ENROL] = LoHelper::ENROLMENT_RE_ENROL_DEFAULT;
         }
@@ -89,6 +91,7 @@ trait LoMockTrait
             'sharing'         => isset($options['sharing']) ? $options['sharing'] : 0,
             'premium'         => isset($options['premium']) ? $options['premium'] : 0,
             'summary'         => isset($options['summary']) ? $options['summary'] : null,
+            'single_li'       => boolval($singleLi),
         ];
         $db->insert('gc_lo', $opt);
 
