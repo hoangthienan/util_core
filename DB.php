@@ -51,6 +51,19 @@ class DB
         ];
     }
 
+    public static function connectionPoolOptions(string $name, $forceSlave = false, $forceMaster = false, string $pdo = PDO::class): array
+    {
+        $o = self::connectionOptions($name, $forceSlave, $forceMaster);
+
+        $pdoOpions = [
+            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+            PDO::ATTR_PERSISTENT         => true
+        ];
+        $o['pdo'] = new $pdo("mysql:host={$o['host']};dbname={$o['dbname']}", $o['user'], $o['password'], $pdoOpions);
+
+        return $o;
+    }
+
     private static function getEnvByPriority(array $names)
     {
         foreach ($names as $name) {
