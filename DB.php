@@ -90,13 +90,14 @@ class DB
 
     public static function safeThread(Connection $db, string $threadName, int $timeout, callable $callback)
     {
+        $treatedLockName = (strlen($threadName) > 64) ? md5($threadName) : $threadName;
         try {
             $sqlite = 'sqlite' === $db->getDatabasePlatform()->getName();
-            !$sqlite && $db->executeQuery('DO GET_LOCK("' . $threadName . '", ' . $timeout . ')');
+            !$sqlite && $db->executeQuery('DO GET_LOCK("' . $treatedLockName . '", ' . $timeout . ')');
 
             return $callback($db);
         } finally {
-            !$sqlite && $db->executeQuery('DO RELEASE_LOCK("' . $threadName . '")');
+            !$sqlite && $db->executeQuery('DO RELEASE_LOCK("' . $treatedLockName . '")');
         }
     }
 
