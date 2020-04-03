@@ -16,6 +16,7 @@ class UserSchema
             $user = $schema->createTable('gc_user');
             $user->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
             $user->addColumn('uuid', 'string');
+            $user->addColumn('user_uuid', 'string', ['notnull' => false]);
             $user->addColumn('instance', 'string');
             $user->addColumn('profile_id', 'integer', ['notnull' => false]);
             $user->addColumn('mail', 'string');
@@ -37,6 +38,7 @@ class UserSchema
             $user->addIndex(['login']);
             $user->addIndex(['timestamp']);
             $user->addIndex(['instance']);
+            $user->addIndex(['user_uuid']);
             $user->addUniqueIndex(['uuid']);
             $user->addUniqueIndex(['instance', 'mail']);
             $user->addUniqueIndex(['instance', 'profile_id']);
