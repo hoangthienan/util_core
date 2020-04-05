@@ -23,13 +23,14 @@ class UserHelperTest extends UtilCoreTestCase
         $this->assertEquals($id, $user->id);
         $this->assertEquals('foo@bar.baz', $user->mail);
         $this->assertEquals('qa.mygo1.com', $user->instance);
+        $this->assertNull($user->user_uuid);
         $this->assertEquals(false, UserHelper::load($this->go1, 0));
         $this->assertEquals(false, UserHelper::load($this->go1, 999));
     }
 
     public function testLoadByInstance()
     {
-        $id = $this->createUser($this->go1, ['mail' => 'foo@bar.baz', 'instance' => 'qa.mygo1.com']);
+        $id = $this->createUser($this->go1, ['mail' => 'foo@bar.baz', 'instance' => 'qa.mygo1.com', 'user_uuid' => '1f998f26-05df-4130-a9f4-5eb040b18259']);
 
         $this->assertEquals(false, UserHelper::load($this->go1, 0, 'qa.mygo1.com'));
         $this->assertEquals(false, UserHelper::load($this->go1, 999, 'qa.mygo1.com'));
@@ -40,6 +41,7 @@ class UserHelperTest extends UtilCoreTestCase
         $this->assertEquals($id, $user->id);
         $this->assertEquals('foo@bar.baz', $user->mail);
         $this->assertEquals('qa.mygo1.com', $user->instance);
+        $this->assertEquals('1f998f26-05df-4130-a9f4-5eb040b18259', $user->user_uuid);
 
         $user = (array) UserHelper::load($this->go1, $id, 'qa.mygo1.com', 'mail');
         $this->assertCount(1, $user);
