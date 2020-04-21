@@ -24,5 +24,12 @@ class LoUpdateEventEmbedderTest extends LoCreateEventEmbedderTest
         $this->assertEquals('qa.mygo1.com', $embedded['portal']->title);
         $this->assertEquals(LoTypes::MODULE, $embedded['parents'][1]->type);
         $this->assertEquals(LoTypes::COURSE, $embedded['parents'][0]->type);
+
+        $this->assertEquals(1, sizeof($embedded['authors']));
+        $author = $embedded['authors'][0];
+        $this->assertEquals(1, $author->id);
+        $this->assertEquals('thehongtt@gmail.com',$author->mail);
+        $this->assertEquals('A',$author->first_name);
+        $this->assertEquals('T', $author->last_name);
     }
 }

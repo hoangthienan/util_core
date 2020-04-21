@@ -13,7 +13,6 @@ class LoUpdateEventEmbedder extends LoCreateEventEmbedder
     {
         $embedded = parent::embedded($lo, $req);
 
-        $this->embedAuthors($embedded, $lo->id);
         $this->embedParentLo($embedded, $lo);
 
         return $embedded;
