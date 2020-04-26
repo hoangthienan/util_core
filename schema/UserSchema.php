@@ -30,6 +30,7 @@ class UserSchema
             $user->addColumn('allow_public', 'integer', ['default' => 0]);
             $user->addColumn('data', 'text');
             $user->addColumn('timestamp', 'integer');
+            $user->addColumn('locale', 'string', ['length' => 12, 'notnull' => false]);
 
             $user->setPrimaryKey(['id']);
             $user->addIndex(['uuid']);
@@ -56,6 +57,7 @@ class UserSchema
             $role->addIndex(['instance', 'name', 'weight']);
         }
 
+        // @deprecated To be merged into gc_user
         if (!$schema->hasTable('gc_user_locale')) {
             $locale = $schema->createTable('gc_user_locale');
             $locale->addColumn('id', 'integer', ['unsigned' => true]);
@@ -113,5 +115,13 @@ class UserSchema
         $manager = $db->getSchemaManager();
         $manager->createView(new View('gc_users', "SELECT * FROM gc_user WHERE instance = '{$accountsName}'"));
         $manager->createView(new View('gc_accounts', "SELECT * FROM gc_user WHERE instance <> '{$accountsName}'"));
+    }
+
+    public static function update01(Schema $schema)
+    {
+        $table = $schema->getTable('gc_user');
+        if (!$table->hasColumn('locale')) {
+            $table->addColumn('locale', 'string', ['length' => 12, 'notnull' => false]);
+        }
     }
 }

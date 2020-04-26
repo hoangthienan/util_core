@@ -56,6 +56,9 @@ trait InstallTrait
                 EnrolmentSchema::install($schema);
                 PlanRepository::install($schema);
                 DimensionRepository::install($schema);
+
+                // Add gc_user.locale column if does not exist
+                UserSchema::update01($schema);
             },
             function (Schema $schema) use ($coreOnly) {
                 if (!$coreOnly) {

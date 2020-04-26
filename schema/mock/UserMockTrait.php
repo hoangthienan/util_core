@@ -84,6 +84,7 @@ trait UserMockTrait
             'allow_public' => isset($options['allow_public']) ? $options['allow_public'] : 0,
             'data'         => $data,
             'timestamp'    => isset($options['timestamp']) ? $options['timestamp'] : time(),
+            'locale'       => isset($options['locale']) ? $options['locale'] : null,
         ]);
 
         return $db->lastInsertId('gc_user');
