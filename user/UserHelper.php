@@ -177,6 +177,7 @@ class UserHelper
             'status'     => (bool) $user->status,
             'data'       => (object) (is_array($data) ? array_diff_key($data, ['avatar' => 0, 'roles' => 0, 'phone' => 0]) : $data),
             'timestamp'  => intval($user->timestamp),
+            'locale'     => $user->locale ?? null,
             'phone'      => $data['phone'] ?? null,
             'root'       => null,
         ];
