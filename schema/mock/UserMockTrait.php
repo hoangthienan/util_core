@@ -91,14 +91,15 @@ trait UserMockTrait
     }
 
     # NOTE: This is not yet stable, JWT is large, not good for production usage.
-    public function jwtForUser(Connection $db, int $userId, string $portalName = null, string $sid = null): string
+    public function jwtForUser(Connection $db, int $userId, string $portalName = null, string $sid = null, bool $usedCreds = false): string
     {
         $payload = [
-            'iss'    => 'go1.user',
-            'ver'    => '1.1',
-            'exp'    => strtotime('+ 1 year'),
-            'sid'    => $sid,
-            'object' => (object) [
+            'iss'       => 'go1.user',
+            'ver'       => '1.1',
+            'exp'       => strtotime('+ 1 year'),
+            'sid'       => $sid,
+            'usedCreds' => $usedCreds ? 1 : 0,
+            'object'    => (object)[
                 'type'    => 'user',
                 'content' => call_user_func(
                     function () use ($db, $userId, $portalName) {
@@ -107,7 +108,7 @@ trait UserMockTrait
 
                         if ($user && !empty($user->accounts[0])) {
                             $account = &$user->accounts[0];
-                            $account->portalId = (int) $db->fetchColumn('SELECT id FROM gc_instance WHERE title = ?', [$account->instance]);
+                            $account->portalId = (int)$db->fetchColumn('SELECT id FROM gc_instance WHERE title = ?', [$account->instance]);
                         }
 
                         return $user;
