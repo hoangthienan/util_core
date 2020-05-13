@@ -57,8 +57,12 @@ trait InstallTrait
                 PlanRepository::install($schema);
                 DimensionRepository::install($schema);
 
-                // Add gc_user.locale column if does not exist
+                // Added gc_user.locale column if does not exist and drop gc_user_locale
                 UserSchema::update01($schema);
+                UserSchema::update02($schema);
+
+                // Added gc_user_email.user_id and gc_user_email.verified
+                UserSchema::update03($schema);
             },
             function (Schema $schema) use ($coreOnly) {
                 if (!$coreOnly) {

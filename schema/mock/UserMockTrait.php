@@ -310,9 +310,9 @@ trait UserMockTrait
         return $db->lastInsertId('gc_ro');
     }
 
-    protected function addEmail(Connection $db, $email)
+    protected function addEmail(Connection $db, $email, $userId)
     {
-        $db->insert('gc_user_mail', ['title' => $email]);
+        $db->insert('gc_user_mail', ['user_id' => $userId, 'title' => $email]);
 
         return $db->lastInsertId('gc_user_mail');
     }
