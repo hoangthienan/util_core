@@ -141,7 +141,7 @@ class UserSchema
             $table->addColumn('verified', 'integer', ['size' => 'tiny', 'default' => 0]);
         }
         if ($table->hasColumn('user_id') && $table->hasColumn('verified')) {
-            $table->addUniqueIndex(['user_id', 'title']);
+            !$table->hasIndex('uniq_user_id_email') && $table->addUniqueIndex(['user_id', 'title'], 'uniq_user_id_email');
         }
     }
 }
