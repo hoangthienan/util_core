@@ -11,6 +11,7 @@ class LoAttributeTypes
     const INTEGER   = "INTEGER";
     const TEXT      = "TEXT";
     const DIMENSION = "DIMENSION";
+    const DATE      = "DATE";
 
     public static function all()
     {
