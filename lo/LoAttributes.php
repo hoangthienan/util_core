@@ -70,7 +70,7 @@ class LoAttributes
             self::CHECK_URL                 => 'check_url',
             self::ROLES                     => 'roles',
             self::SKILLS                    => 'skills',
-            self::SUBSCRIPTION_RENWEAL_DATE => 'subscription_renewal_date',
+            self::SUBSCRIPTION_RENEWAL_DATE => 'subscription_renewal_date',
         ];
 
         return $map[$attribute] ?? null;
