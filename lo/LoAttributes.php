@@ -38,6 +38,7 @@ class LoAttributes
     const ROLES                         = 27;
     const SKILLS                        = 28;
     const SUBSCRIPTION_RENEWAL_DATE     = 29;
+    const PLAYLIST_TYPE                 = 30;
 
     public static function machineName(int $attribute): ?string
     {
@@ -71,6 +72,7 @@ class LoAttributes
             self::ROLES                     => 'roles',
             self::SKILLS                    => 'skills',
             self::SUBSCRIPTION_RENEWAL_DATE => 'subscription_renewal_date',
+            self::PLAYLIST_TYPE             => 'playlist_type',
         ];
 
         return $map[$attribute] ?? null;
