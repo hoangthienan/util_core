@@ -27,14 +27,30 @@ class AccessCheckerTest extends UtilCoreTestCase
         $jwt = $this->jwtForUser($this->go1, $userId, 'qa.mygo1.com');
         $payload = Text::jwtContent($jwt);
         $req->attributes->set('jwt.payload', $payload);
+        $service = new AccessChecker;
 
-        // check by name
-        $account = (new AccessChecker)->validAccount($req, 'qa.mygo1.com');
-        $this->assertEquals($account->id, $accountId);
+        {
+            // check by name
+            $account = $service->validAccount($req, 'qa.mygo1.com');
+            $this->assertEquals($account->id, $accountId);
+        }
 
-        // check by ID
-        $account = (new AccessChecker)->validAccount($req, $portalId);
-        $this->assertEquals($account->id, $accountId);
+        {
+            // check by ID
+            $account = $service->validAccount($req, $portalId);
+            $this->assertEquals($account->id, $accountId);
+        }
+
+        {
+            // test usedCreds
+            $this->assertFalse($service->usedCredentials($req));
+
+            $jwt = $this->jwtForUser($this->go1, $userId, 'qa.mygo1.com');
+            $payload = Text::jwtContent($jwt);
+            $payload->usedCreds = 1;
+            $req->attributes->set('jwt.payload', $payload);
+            $this->assertTrue($service->usedCredentials($req));
+        }
     }
 
     public function testVirtualAccount()
@@ -82,7 +98,7 @@ class AccessCheckerTest extends UtilCoreTestCase
         $this->link($this->go1, EdgeTypes::HAS_ACCOUNT, $userId, $accountId);
         $this->link($this->go1, EdgeTypes::HAS_ROLE, $userId, $this->createAccountsAdminRole($this->go1, ['instance' => $accountsName]));
         $this->link($this->go1, EdgeTypes::HAS_ROLE, $accountId, $this->createPortalAdminRole($this->go1, ['instance' => $portalName]));
-        
+
         $req = new Request;
         $access = new AccessChecker;
         $req->attributes->set('jwt.payload', JWT::decode($this->jwtForUser($this->go1, $userId, $portalName), 'INTERNAL', ['HS256']));
@@ -128,7 +144,7 @@ class AccessCheckerTest extends UtilCoreTestCase
         $accessChecker = new AccessChecker;
         $this->assertNull($accessChecker->sessionToken($req));
 
-        $req->attributes->set('jwt.payload', (object)['sid' => $sessionToken]);
+        $req->attributes->set('jwt.payload', (object) ['sid' => $sessionToken]);
         $this->assertEquals($sessionToken, $accessChecker->sessionToken($req));
     }
 }

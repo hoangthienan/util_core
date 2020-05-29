@@ -130,6 +130,13 @@ class AccessChecker
         return $payload->sid ?? null;
     }
 
+    public function usedCredentials(Request $req = null): bool
+    {
+        $payload = $req->attributes->get('jwt.payload');
+
+        return $payload->usedCreds ?? false;
+    }
+
     public function validUser(Request $req, $portalName = null, Connection $db = null)
     {
         $payload = $req->attributes->get('jwt.payload');
@@ -291,8 +298,7 @@ class AccessChecker
         int $assessorId,
         bool $checkParent = true,
         Request $req = null
-    ): bool
-    {
+    ): bool {
         if ($req && $this->isAccountsAdmin($req)) {
             return true;
         }
