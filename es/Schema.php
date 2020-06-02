@@ -20,6 +20,7 @@ class Schema
     const PORTALS_INDEX     = ES_INDEX . '_portal*';
     const PAYMENT_INDEX     = ES_INDEX . '_payment';
     const EVENT_INDEX       = ES_INDEX . '_event';
+    const AWARD_INDEX       = ES_INDEX . '_award';
 
     # GO1-core indices
     const LEARNING_RECORD_INDEX = ES_INDEX.'_learning_record';
