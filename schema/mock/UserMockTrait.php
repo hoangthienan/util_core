@@ -85,6 +85,7 @@ trait UserMockTrait
             'data'         => $data,
             'timestamp'    => isset($options['timestamp']) ? $options['timestamp'] : time(),
             'locale'       => isset($options['locale']) ? $options['locale'] : null,
+            'user_id'      => $options['user_id'] ?? null,
         ]);
 
         return $db->lastInsertId('gc_user');
