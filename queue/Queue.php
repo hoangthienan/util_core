@@ -48,6 +48,7 @@ class Queue
     const USER_DELETE                   = 'user.delete';
     const USER_BULK_NOTIFY              = 'user.bulk-notify';
     const USER_FORGET_PASSWORD          = 'user.forget-password';
+    const USER_PASSWORD_CHANGE          = 'user.password.change';
     const USER_LOGIN_SUCCESS            = 'user.login-success';
     const USER_LOGIN_FAIL               = 'user.login-fail';
     const USER_MASQUERADE               = 'user.masquerade';
@@ -214,6 +215,9 @@ class Queue
     const CONTENT_JOB_PROCESS_IMPORT = 'content_job.process.import';
     const CONTENT_JOB_PROCESS_IMPORT_JOB = 'content_job_job.process.import';
 
+    # user-domain events.
+    const USER_DOMAIN_PORTAL_ACCOUNT_CREATE = 'user-domain.portal-account.create';
+    
     /**
      * @deprecated
      *

@@ -11,6 +11,7 @@ use go1\util\plan\event_publishing\PlanCreateEventEmbedder;
 use go1\util\plan\event_publishing\PlanDeleteEventEmbedder;
 use go1\util\plan\event_publishing\PlanUpdateEventEmbedder;
 use go1\util\queue\Queue;
+use Ramsey\Uuid\Uuid;
 
 class PlanRepository
 {
@@ -180,6 +181,7 @@ class PlanRepository
         $plan->id = $this->db->lastInsertId('gc_plan');
         $plan->notify = $notify ?: ($queueContext['notify'] ?? false);
         $queueContext['notify'] = $plan->notify;
+        $queueContext['sessionId'] = Uuid::uuid4()->toString();
 
         $payload = $plan->jsonSerialize();
         $payload['embedded'] = $this->planCreateEventEmbedder->embedded($plan);

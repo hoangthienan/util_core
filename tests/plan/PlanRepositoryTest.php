@@ -86,6 +86,7 @@ class PlanRepositoryTest extends UtilCoreTestCase
         $this->assertArrayHasKey('embedded', $this->queueMessages[Queue::PLAN_CREATE][0]);
         $msg = (object) $this->queueMessages[Queue::PLAN_CREATE][0];
         $this->assertEquals($msg->notify, $expectedNotify);
+        $this->assertNotEmpty($msg->_context['sessionId']);
     }
 
     public function testUpdate()
