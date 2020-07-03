@@ -123,7 +123,7 @@ class AccessChecker
         return false;
     }
 
-    public function jwt(): ?string
+    public function jwt(Request $req): ?string
     {
         return $req->attributes->get('jwt.raw');
     }
