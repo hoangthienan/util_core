@@ -123,6 +123,11 @@ class AccessChecker
         return false;
     }
 
+    public function jwt(): ?string
+    {
+        return $req->attributes->get('jwt.raw');
+    }
+
     public function sessionToken(Request $req): ?string
     {
         $payload = $req->attributes->get('jwt.payload');
