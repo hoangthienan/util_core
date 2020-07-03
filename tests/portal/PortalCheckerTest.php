@@ -100,8 +100,8 @@ class PortalCheckerTest extends UtilCoreTestCase
             ['production', 'az.mygo1.com', '123', 'play', 'https://az.mygo1.com/play/123'],
             ['staging', 'staging.mygo1.com', '', 'p/#', 'https://staging.mygo1.com/p/#/'],
             ['staging', 'staging.mygo1.com', '123', 'play', 'https://staging.mygo1.com/play/123'],
-            ['qa', 'qa.mygo1.com', '', 'p/#', 'https://qa.mygo1.com/p/#/'],
-            ['qa', 'qa.mygo1.com', '123', 'play', 'https://qa.mygo1.com/play/123'],
+            ['qa', 'qa.go1.cloud', '', 'p/#', 'https://qa.go1.cloud/p/#/'],
+            ['qa', 'qa.go1.cloud', '123', 'play', 'https://qa.go1.cloud/play/123'],
             ['dev', 'dev.mygo1.com', '', 'p/#', 'https://dev.mygo1.com/p/#/'],
             ['', 'dev.mygo1.com', '', 'p/#', 'https://dev.mygo1.com/p/#/'],
             ['', 'dev.mygo1.com', '123', 'play', 'https://dev.mygo1.com/play/123'],
@@ -478,7 +478,7 @@ class PortalCheckerTest extends UtilCoreTestCase
     {
         return [
             ['ENV_HOSTNAME_QA=qa.go1.cloud', 'https://qa.go1.cloud/p/#/'],
-            ['ENV_HOSTNAME_QA', 'https://qa.mygo1.com/p/#/'],
+            ['ENV_HOSTNAME_QA', 'https://qa.go1.cloud/p/#/'],
         ];
     }
 
