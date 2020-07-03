@@ -16,10 +16,9 @@ use function array_map;
 
 class UserHelper
 {
-    const ROOT_JWT               = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJvYmplY3QiOnsidHlwZSI6InVzZXIiLCJjb250ZW50Ijp7ImlkIjoxLCJwcm9maWxlX2lkIjoxLCJyb2xlcyI6WyJBZG1pbiBvbiAjQWNjb3VudHMiXSwibWFpbCI6IjFAMS4xIn19fQ.YwGrlnegpd_57ek0vew5ixBfzhxiepc5ODVwPva9egs';
-    const DEFAULT_ACCOUNTS_ROLES = [Roles::AUTHENTICATED];
-    const DEFAULT_PORTAL_ROLES   = [Roles::STUDENT, Roles::AUTHENTICATED];
-
+    const ROOT_JWT                     = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJvYmplY3QiOnsidHlwZSI6InVzZXIiLCJjb250ZW50Ijp7ImlkIjoxLCJwcm9maWxlX2lkIjoxLCJyb2xlcyI6WyJBZG1pbiBvbiAjQWNjb3VudHMiXSwibWFpbCI6IjFAMS4xIn19fQ.YwGrlnegpd_57ek0vew5ixBfzhxiepc5ODVwPva9egs';
+    const DEFAULT_ACCOUNTS_ROLES       = [Roles::AUTHENTICATED];
+    const DEFAULT_PORTAL_ROLES         = [Roles::STUDENT, Roles::AUTHENTICATED];
     const SYSTEM_USER_ID               = -1;
     const CRON_USER_ID                 = -11;
     const INTERACTIVE_ADMIN_USER_ID    = -100;
@@ -35,6 +34,9 @@ class UserHelper
         return $portal ? $portal->status : true;
     }
 
+    /**
+     * @deprecated Use UserDomainHelper::load()
+     */
     public static function load(Connection $db, int $id, string $instance = null, $columns = '*')
     {
         $sql = "SELECT $columns FROM gc_user WHERE id = ?";
@@ -48,6 +50,9 @@ class UserHelper
         return $db->executeQuery($sql, $params)->fetch(DB::OBJ);
     }
 
+    /**
+     * @deprecated Use UserDomainHelper::loadByEmail()
+     */
     public static function loadByEmail(Connection $db, string $instance, string $mail, $columns = '*')
     {
         return $db
@@ -60,11 +65,17 @@ class UserHelper
         return $db->executeQuery("SELECT $columns FROM gc_user WHERE id IN (?)", [$ids], [Connection::PARAM_INT_ARRAY]);
     }
 
+    /**
+     * @deprecated Use UserDomainHelper::loadMultiple().
+     */
     public static function loadMultiple(Connection $db, array $ids, string $columns = '*'): array
     {
         return self::queryMultiple($db, $ids, $columns)->fetchAll(DB::OBJ);
     }
 
+    /**
+     * @deprecated Use UserDomainHelper::loadByProfileId().
+     */
     public static function loadByProfileId(Connection $db, int $profileId, string $portalName, $columns = '*')
     {
         $sql = "SELECT $columns FROM gc_user WHERE profile_id = ? AND instance = ?";
@@ -72,11 +83,17 @@ class UserHelper
         return $db->executeQuery($sql, [$profileId, $portalName])->fetch(DB::OBJ);
     }
 
+    /**
+     * @deprecated Use UserDomainHelper::uuidByProfileId().
+     */
     public static function uuidByProfileId(Connection $db, string $accountsName, int $profileId)
     {
         return $db->fetchColumn('SELECT uuid FROM gc_user WHERE instance = ? AND profile_id = ?', [$accountsName, $profileId]);
     }
 
+    /**
+     * @deprecated Use UserDomainHelper::uuidByProfileId().
+     */
     public function profileId2uuid(Client $client, $userUrl, $profileId)
     {
         $jwt = JWT::encode(['admin' => true], 'INTERNAL');
@@ -95,6 +112,9 @@ class UserHelper
         return trim($name) ?: $user->mail;
     }
 
+    /**
+     * @deprecated Don't use this method.
+     */
     public static function firstName(Connection $db, stdClass $account, string $accountsName)
     {
         if ($account->instance != $accountsName) {
@@ -106,6 +126,9 @@ class UserHelper
         return ($user && $user->first_name) ? $user->first_name : '';
     }
 
+    /**
+     * @deprecated Don't use this method.
+     */
     public static function lastName(Connection $db, stdClass $account, string $accountsName)
     {
         if ($account->instance != $accountsName) {
@@ -117,6 +140,9 @@ class UserHelper
         return ($user && $user->last_name) ? $user->last_name : '';
     }
 
+    /**
+     * @deprecated Use AccessChecker
+     */
     public static function jwt(Request $req)
     {
         if ($auth = $req->headers->get('Authorization') ?: $req->headers->get('Authorization')) {
@@ -134,6 +160,9 @@ class UserHelper
         return (2 === substr_count($token, '.')) ? $token : false;
     }
 
+    /**
+     * @deprecated Don't use this method.
+     */
     public static function authorizationHeader(Request $req)
     {
         if (!$jwt = static::jwt($req)) {
@@ -158,6 +187,9 @@ class UserHelper
         return JWT::encode($array, 'INTERNAL');
     }
 
+    /**
+     * @deprecated Use UserMapper
+     */
     public static function format(stdClass $user)
     {
         $data = isset($user->data) ? (is_scalar($user->data) ? json_decode($user->data, true) : $user->data) : null;
@@ -183,6 +215,9 @@ class UserHelper
         ];
     }
 
+    /**
+     * @deprecated Use UserDomainHelper.
+     */
     public function attachRootAccount(Connection $db, array &$accounts, $accountsName)
     {
         $q = $db->createQueryBuilder();
@@ -262,6 +297,9 @@ class UserHelper
         return $db->executeQuery($sql, [$mail])->fetchAll(PDO::FETCH_COLUMN);
     }
 
+    /**
+     * @deprecated Use UserDomainHelper::loadPortalAccount()->user->legacyId.
+     */
     public static function userId(Connection $db, int $accountId, string $accountsName)
     {
         if ($account = self::load($db, $accountId)) {
@@ -277,6 +315,9 @@ class UserHelper
         return null;
     }
 
+    /**
+     * @deprecated Use UserDomainHelper::loadUserByProfileId()
+     */
     public static function loadUserByProfileId(Connection $db, int $profileId, string $columns = '*'): ?stdClass
     {
         $user = $db
@@ -357,11 +398,11 @@ class UserHelper
                             'id'         => 1,
                             'profile_id' => 1,
                             'instance'   => $portal->title,
-                            'portal_id'  => (int)$portal->id,
+                            'portal_id'  => (int) $portal->id,
                             'name'       => 'public',
-                            'roles'      => [Roles::STUDENT]
-                        ]
-                    ]
+                            'roles'      => [Roles::STUDENT],
+                        ],
+                    ],
                 ],
             ],
         ];
