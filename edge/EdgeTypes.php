@@ -91,7 +91,7 @@ class EdgeTypes
     const HAS_TUTOR                   = 15; # T: Simple Account       | S: Learning object
     const HAS_AUTHOR                  = 17; # T: Simple Account       | S: Learning object
     const HAS_TUTOR_ENROLMENT         = 18; # T: Simple account       | S: Enrolment
-    const HAS_ENQUIRY                 = 19; # T: Learning object      | S: Profile
+    const HAS_ENQUIRY                 = 19; # T: User                 | S: Learning Object
     const HAS_ARCHIVED_ENQUIRY        = 20; # T: NULL                 | S: Deleted gc_ro type HAS_ENQUIRY's id - just for handling duplicated archived enquiries
     const HAS_EXCLUDED_TAG            = 31; # T: Tag                  | S: Learning object
     const COURSE_ASSESSOR             = 32; # T: gc_user.id           | S: Learning object
