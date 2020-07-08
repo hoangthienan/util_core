@@ -270,6 +270,7 @@ class Queue
     const DO_EXIM_IMPORT                       = 'do.exim.import'; # { data: OBJECT[], taskId: INT }
     const DO_SMS_SEND                          = 'do.sms.send'; # { to: STRING, body: STRING }
     const DO_GRAPHIN_IMPORT                    = 'do.graphin.import'; # { type: STRING, id: INT }
+    // @deprecated by no longer use virtual account
     const DO_USER_CREATE_VIRTUAL_ACCOUNT       = 'do.user.virtual-account'; # { type: STRING, object: enrolment/??? object}
     const DO_USER_DELETE                       = 'do.user.delete'; # User Object
     const DO_USER_IMPORT                       = 'do.user.import'; # {$instance, $mail, $first, $last, $status, $manager}

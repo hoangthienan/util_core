@@ -53,25 +53,6 @@ class AccessCheckerTest extends UtilCoreTestCase
         }
     }
 
-    public function testVirtualAccount()
-    {
-        $userId = $this->createUser($this->go1, ['instance' => 'accounts.gocatalyze.com']);
-        $portalName = 'portal.mygo1.com';
-        $accountId = $this->createUser($this->go1, ['instance' => $portalName]);
-        $this->link($this->go1, EdgeTypes::HAS_ACCOUNT_VIRTUAL, $userId, $accountId);
-
-        $payload = $this->getPayload([]);
-        $req = new Request;
-        $req->attributes->set('jwt.payload', $payload);
-
-        $access = new AccessChecker();
-        $account1 = $access->validUser($req, $portalName);
-        $this->assertFalse($account1);
-
-        $account2 = $access->validUser($req, $portalName, $this->go1);
-        $this->assertEquals($accountId, $account2->id);
-    }
-
     public function testIsStudentManager()
     {
         $manager2Id = $this->createUser($this->go1, ['mail' => $manager2Mail = 'manager2@mail.com', 'instance' => $accountsName = 'accounts.gocatalyze.com']);

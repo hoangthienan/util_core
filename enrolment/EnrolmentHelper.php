@@ -297,14 +297,6 @@ class EnrolmentHelper
 
         $db->insert('gc_enrolment', $data);
 
-        if ($lo->marketplace) {
-            if ($portal = PortalHelper::load($db, $lo->instance_id)) {
-                if ((new PortalChecker)->isVirtual($portal)) {
-                    $queue->publish(['type' => 'enrolment', 'object' => $data], Queue::DO_USER_CREATE_VIRTUAL_ACCOUNT);
-                }
-            }
-        }
-
         $rMqClient = new ReflectionClass(MqClient::class);
         $actorIdKey = $rMqClient->hasConstant('CONTEXT_ACTOR_ID') ? $rMqClient->getConstant('CONTEXT_ACTOR_ID') : 'actor_id';
 
