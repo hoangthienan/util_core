@@ -330,7 +330,6 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $this->assertEquals($e->changed, $enrolment->changed);
         $this->assertEquals('bar', $e->data->foo);
 
-        $this->assertCount(1, $this->queueMessages[Queue::DO_USER_CREATE_VIRTUAL_ACCOUNT]);
         $this->assertCount(1, $this->queueMessages[Queue::ENROLMENT_CREATE]);
     }
 

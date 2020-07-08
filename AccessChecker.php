@@ -162,6 +162,7 @@ class AccessChecker
                 }
             }
 
+            // @TODO: To be removed this logic
             if ($db) {
                 $account = UserHelper::loadByEmail($db, $portalName, $user->mail);
                 if (is_object($account)) {
