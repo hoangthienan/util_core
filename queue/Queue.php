@@ -217,6 +217,7 @@ class Queue
 
     # user-domain events.
     const USER_DOMAIN_PORTAL_ACCOUNT_CREATE = 'user-domain.portal-account.create';
+    const USER_DOMAIN_PORTAL_ACCOUNT_DELETE = 'user-domain.portal-account.delete';
     
     /**
      * @deprecated
