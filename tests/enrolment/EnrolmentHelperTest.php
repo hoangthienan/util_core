@@ -297,8 +297,8 @@ class EnrolmentHelperTest extends UtilCoreTestCase
 
     public function testCreateWithMarketplaceLO()
     {
-        $instanceId = $this->createPortal($this->go1, []);
-        $courseId = $this->createCourse($this->go1, ['instance_id' => $instanceId, 'marketplace' => 1]);
+        $instanceId = $this->createPortal($this->go1, ['title' => 'content-provider.mygo1.com']);
+        $courseId = $this->createCourse($this->go1, ['title' => 'marketplace.mygo1.com', 'instance_id' => $instanceId, 'marketplace' => 1]);
         $lo = LoHelper::load($this->go1, $courseId);
 
         $enrolment = Enrolment::create();
@@ -335,7 +335,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
 
     public function testLoadRevision()
     {
-        $instanceId = $this->createPortal($this->go1, []);
+        $instanceId = $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']);
         $courseId = $this->createCourse($this->go1, ['instance_id' => $instanceId]);
         $status = EnrolmentStatuses::NOT_STARTED;
         $date = DateTime::formatDate('now');

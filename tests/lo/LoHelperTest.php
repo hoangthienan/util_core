@@ -50,8 +50,8 @@ class LoHelperTest extends UtilCoreTestCase
         $this->assessor2Id = $this->createUser($this->go1, ['mail' => 'assessor2@mail.com']);
         $this->assessor3Id = $this->createUser($this->go1, ['mail' => 'assessor3@mail.com']);
 
-        $this->course1Id = $this->createCourse($this->go1, ['instance_id' => $this->createPortal($this->go1, [])]);
-        $this->course2Id = $this->createCourse($this->go1, ['instance_id' => $this->createPortal($this->go1, [])]);
+        $this->course1Id = $this->createCourse($this->go1, ['instance_id' => $this->createPortal($this->go1, ['title' => 'portal1.mygo1.com'])]);
+        $this->course2Id = $this->createCourse($this->go1, ['instance_id' => $this->createPortal($this->go1, ['title' => 'portal2.mygo1.com'])]);
 
         $this->module1Id = $this->createModule($this->go1);
         $this->module2Id = $this->createModule($this->go1);
@@ -416,7 +416,7 @@ class LoHelperTest extends UtilCoreTestCase
 
     public function testIsSingleLi()
     {
-        $videoId = $this->createVideo($this->go1, ['instance_id' => $this->createPortal($this->go1, []), 'data' => [LoHelper::SINGLE_LI => true]]);
+        $videoId = $this->createVideo($this->go1, ['instance_id' => $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']), 'data' => [LoHelper::SINGLE_LI => true]]);
         $video = LoHelper::load($this->go1, $videoId);
         $this->assertTrue(LoHelper::isSingleLi($video));
         $this->assertFalse(LoHelper::isSingleLi(LoHelper::load($this->go1, $this->course1Id)));
@@ -482,7 +482,7 @@ class LoHelperTest extends UtilCoreTestCase
 
     public function testGetSuggestedCompletionWithSingleLI()
     {
-        $videoId = $this->createVideo($this->go1, ['instance_id' => $this->createPortal($this->go1, []), 'data' => [LoHelper::SINGLE_LI => true]]);
+        $videoId = $this->createVideo($this->go1, ['instance_id' => $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']), 'data' => [LoHelper::SINGLE_LI => true]]);
         $targetId = $this->link($this->go1, EdgeTypes::HAS_LI, $this->module1Id, $videoId);
         $this->link($this->go1, EdgeTypes::HAS_SUGGESTED_COMPLETION, $videoId, $targetId, 0, json_encode([
             'type'  => 2,
@@ -563,7 +563,7 @@ class LoHelperTest extends UtilCoreTestCase
 
     public function testAllowReuseEnrolment()
     {
-        $courseId = $this->createCourse($this->go1, ['instance_id' => $this->createPortal($this->go1, []), 'data' => [LoHelper::ALLOW_REUSE_ENROLMENT => true]]);
+        $courseId = $this->createCourse($this->go1, ['instance_id' => $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']), 'data' => [LoHelper::ALLOW_REUSE_ENROLMENT => true]]);
         $course = LoHelper::load($this->go1, $courseId);
         $this->assertTrue(LoHelper::allowReuseEnrolment($course));
         $this->assertFalse(LoHelper::allowReuseEnrolment(LoHelper::load($this->go1, $this->course1Id)));
@@ -571,7 +571,7 @@ class LoHelperTest extends UtilCoreTestCase
 
     public function testPremiumFlag()
     {
-        $courseId = $this->createCourse($this->go1, ['instance_id' => $this->createPortal($this->go1, []), 'premium' => 1]);
+        $courseId = $this->createCourse($this->go1, ['instance_id' => $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']), 'premium' => 1]);
         $course = LoHelper::load($this->go1, $courseId);
         $this->assertEquals($course->premium, 1);
     }
@@ -591,7 +591,7 @@ class LoHelperTest extends UtilCoreTestCase
             'modified_date'   => 0
         ]);
         $loId = $this->createLO($this->go1, [
-                'instance_id' => $this->createPortal($this->go1, []),
+                'instance_id' => $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']),
                 'type' => 'video',
                 'attributes' => [
                     LoAttributes::machineName(LoAttributes::REGION_RESTRICTIONS) => [
@@ -618,7 +618,7 @@ class LoHelperTest extends UtilCoreTestCase
         ]];
 
         $loId = $this->createLO($this->go1, [
-            'instance_id' => $this->createPortal($this->go1, []),
+            'instance_id' => $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']),
             'type' => 'video',
             'attributes' => $body
         ]);
@@ -629,7 +629,7 @@ class LoHelperTest extends UtilCoreTestCase
 
     public function testSummary()
     {
-        $courseId = $this->createCourse($this->go1, ['instance_id' => $this->createPortal($this->go1, []), 'summary' => "a summary"]);
+        $courseId = $this->createCourse($this->go1, ['instance_id' => $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']), 'summary' => "a summary"]);
         $course = LoHelper::load($this->go1, $courseId);
         $this->assertEquals($course->summary, "a summary");
     }
