@@ -16,17 +16,17 @@ class PortalHelperTest extends UtilCoreTestCase
 
     public function testLogo()
     {
-        $portalId = $this->createPortal($this->go1, ['data' => ['files' => ['logo' => 'http://www.go1.com/logo.png']]]);
+        $portalId = $this->createPortal($this->go1, ['title' => 'portal1.mygo1.com', 'data' => ['files' => ['logo' => 'http://www.go1.com/logo.png']]]);
         $portal = PortalHelper::load($this->go1, $portalId);
         $logo = PortalHelper::logo($portal);
         $this->assertEquals('http://www.go1.com/logo.png', $logo);
 
-        $portalId = $this->createPortal($this->go1, ['data' => ['files' => ['logo' => '//www.go1.com/logo.png']]]);
+        $portalId = $this->createPortal($this->go1, ['title' => 'portal2.mygo1.com', 'data' => ['files' => ['logo' => '//www.go1.com/logo.png']]]);
         $portal = PortalHelper::load($this->go1, $portalId);
         $logo = PortalHelper::logo($portal);
         $this->assertEquals('https://www.go1.com/logo.png', $logo);
 
-        $portalId = $this->createPortal($this->go1, []);
+        $portalId = $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']);
         $portal = PortalHelper::load($this->go1, $portalId);
         $logo = PortalHelper::logo($portal);
         $this->assertEmpty($logo);
