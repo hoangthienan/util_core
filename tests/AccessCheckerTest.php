@@ -128,4 +128,39 @@ class AccessCheckerTest extends UtilCoreTestCase
         $req->attributes->set('jwt.payload', (object) ['sid' => $sessionToken]);
         $this->assertEquals($sessionToken, $accessChecker->sessionToken($req));
     }
+
+    public function testIsRequestVerified()
+    {
+        $scope = [
+            'name'    => 'player',
+            'context' => [
+                'id' => 123,
+            ],
+        ];
+
+        {
+            $req = new Request;
+            $this->assertFalse(AccessChecker::isRequestVerified($req, $scope));
+        }
+
+        {
+            $req = new Request;
+            $req->headers->set('X-ACCESS', 'verified');
+            $this->assertFalse(AccessChecker::isRequestVerified($req, $scope));
+        }
+
+        {
+            $req = new Request;
+            $req->headers->set('X-ACCESS', 'unverified');
+            $this->assertFalse(AccessChecker::isRequestVerified($req, $scope));
+        }
+
+        {
+            $jwt = JWT::encode(['sid' => 'SID', 'exp' => strtotime('+ 15 minutes'), 'scope' => $scope], 'INTERNAL');
+            $req = new Request;
+            $req->attributes->set('jwt.payload', JWT::decode($jwt, 'INTERNAL', ['HS256']));
+            $req->headers->set('X-ACCESS', 'verified');
+            $this->assertTrue(AccessChecker::isRequestVerified($req, $scope));
+        }
+    }
 }

@@ -335,4 +335,20 @@ class AccessChecker
 
         return false;
     }
+
+    public static function isRequestVerified(Request $req, ?array $scope): bool
+    {
+        # `X-ACCESS` is forwarded from up stream API services, we allow to access the endpoint as 1Player previewToken,
+        if (!$req->headers->has('X-ACCESS') || $req->headers->get('X-ACCESS') !== 'verified') {
+            return false;
+        }
+
+        $payload = $req->attributes->get('jwt.payload');
+        $currentScope = $payload->scope ?? null;
+        if ($currentScope == json_decode(json_encode($scope, JSON_FORCE_OBJECT))) {
+            return true;
+        }
+
+        return false;
+    }
 }
