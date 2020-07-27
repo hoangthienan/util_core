@@ -262,6 +262,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $enrolment = Enrolment::create();
         $enrolment->id = 1;
         $enrolment->profileId = 1;
+        $enrolment->userId = 3;
         $enrolment->parentLoId = 2;
         $enrolment->parentEnrolmentId = 3;
         $enrolment->takenPortalId = 4;
@@ -278,6 +279,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $e = EnrolmentHelper::loadSingle($this->go1, 1);
         $this->assertEquals($status, $enrolment->status);
         $this->assertEquals($e->profileId, $enrolment->profileId);
+        $this->assertEquals($e->userId, $enrolment->userId);
         $this->assertEquals($e->loId, $lo->id);
         $this->assertEquals($e->parentLoId, $enrolment->parentLoId);
         $this->assertEquals($e->parentEnrolmentId, $enrolment->parentEnrolmentId);

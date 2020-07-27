@@ -280,6 +280,7 @@ class EnrolmentHelper
         $data = [
             'id'                  => $enrolment->id,
             'profile_id'          => $enrolment->profileId,
+            'user_id'             => $enrolment->userId,
             'parent_lo_id'        => $enrolment->parentLoId,
             'parent_enrolment_id' => $enrolment->parentEnrolmentId,
             'lo_id'               => $lo->id,
