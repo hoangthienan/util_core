@@ -13,6 +13,7 @@ class EnrolmentSchema
             $enrolment = $schema->createTable('gc_enrolment');
             $enrolment->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
             $enrolment->addColumn('profile_id', 'integer', ['unsigned' => true]);
+            $enrolment->addColumn('user_id', 'integer', ['unsigned' => true, 'notnull' => false]);
             $enrolment->addColumn('parent_lo_id', 'integer', ['unsigned' => true, 'notnull' => false, 'default' => 0, 'comment' => '@deprecated: Wrong design, we can not find parent enrolment from this value. This will be soon dropped.']);
             $enrolment->addColumn('parent_enrolment_id', 'integer', ['unsigned' => true, 'notnull' => false, 'default' => 0]);
             $enrolment->addColumn('lo_id', 'integer', ['unsigned' => true]);
@@ -30,6 +31,7 @@ class EnrolmentSchema
             $enrolment->setPrimaryKey(['id']);
             $enrolment->addUniqueIndex(['profile_id', 'parent_enrolment_id', 'lo_id', 'taken_instance_id']);
             $enrolment->addIndex(['profile_id']);
+            $enrolment->addIndex(['user_id']);
             $enrolment->addIndex(['instance_id']);
             $enrolment->addIndex(['parent_lo_id']);
             $enrolment->addIndex(['parent_enrolment_id']);
@@ -45,6 +47,7 @@ class EnrolmentSchema
             $revision->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
             $revision->addColumn('enrolment_id', 'integer', ['unsigned' => true]);
             $revision->addColumn('profile_id', 'integer', ['unsigned' => true]);
+            $revision->addColumn('user_id', 'integer', ['unsigned' => true, 'notnull' => false]);
             $revision->addColumn('parent_lo_id', 'integer', ['unsigned' => true, 'notnull' => false]);
             $revision->addColumn('parent_id', 'integer', ['unsigned' => true, 'notnull' => false, 'default' => 0, 'comment' => 'Parent enrolment ID.']);
             $revision->addColumn('lo_id', 'integer', ['unsigned' => true]);
@@ -63,6 +66,7 @@ class EnrolmentSchema
             $revision->setPrimaryKey(['id']);
             $revision->addIndex(['enrolment_id']);
             $revision->addIndex(['profile_id']);
+            $revision->addIndex(['user_id']);
             $revision->addIndex(['parent_lo_id']);
             $revision->addIndex(['parent_id']);
             $revision->addIndex(['lo_id']);
@@ -103,6 +107,7 @@ class EnrolmentSchema
 
         static::update01($schema);
         static::update02($schema);
+        static::update03($schema);
     }
 
     public static function installManualRecord(Schema $schema)
@@ -155,6 +160,25 @@ class EnrolmentSchema
             if (!$stream->hasColumn('actor_id')) {
                 $stream->addColumn('actor_id', Type::INTEGER, ['unsigned' => true, 'default' => 0]);
                 $stream->addIndex(['actor_id']);
+            }
+        }
+    }
+
+    public static function update03(Schema $schema)
+    {
+        if ($schema->hasTable('gc_enrolment')) {
+            $enrolment = $schema->getTable('gc_enrolment');
+            if (!$enrolment->hasColumn('user_id')) {
+                $enrolment->addColumn('user_id', 'integer', ['unsigned' => true, 'notnull' => false]);
+                $enrolment->addIndex(['user_id']);
+            }
+        }
+
+        if ($schema->hasTable('gc_enrolment_revision')) {
+            $revision = $schema->getTable('gc_enrolment_revision');
+            if (!$revision->hasColumn('user_id')) {
+                $revision->addColumn('user_id', 'integer', ['unsigned' => true, 'notnull' => false]);
+                $revision->addIndex(['user_id']);
             }
         }
     }
