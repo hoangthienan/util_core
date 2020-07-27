@@ -14,21 +14,22 @@ trait EnrolmentMockTrait
         $profileId = isset($options['profile_id']) ? $options['profile_id'] : 0;
 
         $db->insert('gc_enrolment', [
-            'id'                => $options['id'] ?? null,
-            'profile_id'        => $profileId,
-            'parent_lo_id'      => isset($options['parent_lo_id']) ? $options['parent_lo_id'] : 0,
+            'id'                  => $options['id'] ?? null,
+            'profile_id'          => $profileId,
+            'user_id'             => $options['user_id'] ?? null,
+            'parent_lo_id'        => isset($options['parent_lo_id']) ? $options['parent_lo_id'] : 0,
             'parent_enrolment_id' => isset($options['parent_enrolment_id']) ? $options['parent_enrolment_id'] : 0,
-            'lo_id'             => isset($options['lo_id']) ? $options['lo_id'] : 0,
-            'instance_id'       => isset($options['instance_id']) ? $options['instance_id'] : 0,
-            'taken_instance_id' => isset($options['taken_instance_id']) ? $options['taken_instance_id'] : 0,
-            'start_date'        => isset($options['start_date']) ? $options['start_date'] : (new DateTime)->format(DATE_ISO8601),
-            'end_date'          => isset($options['end_date']) ? $options['end_date'] : null,
-            'status'            => isset($options['status']) ? $options['status'] : EnrolmentStatuses::IN_PROGRESS,
-            'result'            => isset($options['result']) ? $options['result'] : 0,
-            'pass'              => isset($options['pass']) ? $options['pass'] : 0,
-            'timestamp'         => isset($options['timestamp']) ? $options['timestamp'] : time(),
-            'changed'           => isset($options['changed']) ? $options['changed'] : time(),
-            'data'              => isset($options['data']) ? (is_scalar($options['data']) ? $options['data'] : json_encode($options['data'])) : '',
+            'lo_id'               => isset($options['lo_id']) ? $options['lo_id'] : 0,
+            'instance_id'         => isset($options['instance_id']) ? $options['instance_id'] : 0,
+            'taken_instance_id'   => isset($options['taken_instance_id']) ? $options['taken_instance_id'] : 0,
+            'start_date'          => isset($options['start_date']) ? $options['start_date'] : (new DateTime)->format(DATE_ISO8601),
+            'end_date'            => isset($options['end_date']) ? $options['end_date'] : null,
+            'status'              => isset($options['status']) ? $options['status'] : EnrolmentStatuses::IN_PROGRESS,
+            'result'              => isset($options['result']) ? $options['result'] : 0,
+            'pass'                => isset($options['pass']) ? $options['pass'] : 0,
+            'timestamp'           => isset($options['timestamp']) ? $options['timestamp'] : time(),
+            'changed'             => isset($options['changed']) ? $options['changed'] : time(),
+            'data'                => isset($options['data']) ? (is_scalar($options['data']) ? $options['data'] : json_encode($options['data'])) : '',
         ]);
 
         $id = $options['id'] ?? $db->lastInsertId('gc_enrolment');
@@ -60,6 +61,7 @@ trait EnrolmentMockTrait
         $db->insert('gc_enrolment_revision', [
             'id'                  => $options['id'] ?? null,
             'profile_id'          => $profileId,
+            'user_id'             => $options['user_id'] ?? null,
             'lo_id'               => isset($options['lo_id']) ? $options['lo_id'] : 0,
             'instance_id'         => isset($options['instance_id']) ? $options['instance_id'] : 0,
             'taken_instance_id'   => isset($options['taken_instance_id']) ? $options['taken_instance_id'] : 0,

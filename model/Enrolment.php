@@ -8,7 +8,13 @@ use stdClass;
 class Enrolment implements JsonSerializable
 {
     public $id;
+
+    /**
+     * @deprecated
+     */
     public $profileId;
+
+    public $userId;
     public $parentEnrolmentId;
     public $loId;
     public $instanceId;
@@ -40,6 +46,7 @@ class Enrolment implements JsonSerializable
         $enrolment->id = $row->id ?? null;
         $enrolment->profileId = $row->profile_id ?? null;
         $enrolment->parentLoId = $row->parent_lo_id ?? 0;
+        $enrolment->userId = $row->user_id ?? null;
         $enrolment->parentEnrolmentId = $row->parent_enrolment_id ?? 0;
         $enrolment->loId = $row->lo_id ?? null;
         $enrolment->instanceId = $row->instance_id ?? 0;
@@ -64,6 +71,7 @@ class Enrolment implements JsonSerializable
         $array = [
             'id'                  => $this->id,
             'profile_id'          => $this->profileId,
+            'user_id'             => $this->userId,
             'parent_lo_id'        => $this->parentLoId,
             'parent_enrolment_id' => $this->parentEnrolmentId,
             'lo_id'               => $this->loId,
