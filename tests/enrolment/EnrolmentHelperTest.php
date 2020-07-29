@@ -476,6 +476,22 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $this->assertNull(EnrolmentHelper::loadUserEnrolment($this->go1, 0, $profileId, $loId, $parentEnrolmentId));
     }
 
+    public function testFindEnrolment()
+    {
+        $enrolmentId = $this->createEnrolment($this->go1, [
+            'lo_id'               => $loId = 2,
+            'profile_id'          => $profileId = 3,
+            'user_id'             => $userId = 4,
+            'parent_enrolment_id' => $parentEnrolmentId = 5,
+            'taken_instance_id'   => $takenPortalId = 5,
+        ]);
+
+        $enrolment = EnrolmentHelper::findEnrolment($this->go1, $takenPortalId, $userId, $loId, $parentEnrolmentId);
+        $this->assertEquals($enrolmentId, $enrolment->id);
+        $this->assertEquals($takenPortalId, $enrolment->takenPortalId);
+        $this->assertNull(EnrolmentHelper::findEnrolment($this->go1, 0, $userId, $loId, $parentEnrolmentId));
+    }
+
     public function testLoadSingleEnrolment()
     {
         $enrolmentId = $this->createEnrolment($this->go1, [
