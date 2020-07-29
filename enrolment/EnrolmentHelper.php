@@ -405,6 +405,25 @@ class EnrolmentHelper
         return $row ? Enrolment::create($row) : null;
     }
 
+    public static function findEnrolment(Connection $db, int $portalId, int $userId, int $loId, int $parentEnrolmentId = null): ?Enrolment
+    {
+        $q = $db
+            ->createQueryBuilder()
+            ->select('*')
+            ->from('gc_enrolment')
+            ->where('lo_id = :loId')->setParameter(':loId', $loId)
+            ->andWhere('user_id = :userId')->setParameter(':userId', $userId)
+            ->andWhere('taken_instance_id = :takenInstanceId')->setParameter(':takenInstanceId', $portalId);
+
+        !is_null($parentEnrolmentId) && $q
+            ->andWhere('parent_enrolment_id = :parentEnrolmentId')
+            ->setParameter(':parentEnrolmentId', $parentEnrolmentId);
+
+        $row = $q->execute()->fetch(DB::OBJ);
+
+        return $row ? Enrolment::create($row) : null;
+    }
+
     public static function childIds(Connection $db, int $enrolmentId): array
     {
         return $db
