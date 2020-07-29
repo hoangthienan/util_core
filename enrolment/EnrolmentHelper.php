@@ -386,6 +386,16 @@ class EnrolmentHelper
         return [$dueDate, $planType];
     }
 
+    /**
+     * @deprecated
+     * @see findEnrolment
+     * @param Connection $db
+     * @param int $portalId
+     * @param int $profileId
+     * @param int $loId
+     * @param int|null $parentEnrolmentId
+     * @return Enrolment|null
+     */
     public static function loadUserEnrolment(Connection $db, int $portalId, int $profileId, int $loId, int $parentEnrolmentId = null): ?Enrolment
     {
         $q = $db
