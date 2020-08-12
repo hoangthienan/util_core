@@ -6,7 +6,6 @@ use Doctrine\DBAL\Connection;
 use go1\util\AccessChecker;
 use go1\util\lo\LoHelper;
 use go1\util\portal\PortalHelper;
-use go1\util\user\UserHelper;
 use stdClass;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -28,12 +27,6 @@ class EnrolmentEventsEmbedder
         $portal = PortalHelper::load($this->go1, $enrolment->taken_instance_id);
         if ($portal) {
             $embedded['portal'] = $portal;
-
-            $user = UserHelper::loadUserByProfileId($this->go1, $enrolment->profile_id, 'mail');
-            $account = $user ? UserHelper::loadByEmail($this->go1, $portal->title, $user->mail) : null;
-            if ($account) {
-                $embedded['account'] = $account;
-            }
         }
 
         $lo = LoHelper::load($this->go1, $enrolment->lo_id);

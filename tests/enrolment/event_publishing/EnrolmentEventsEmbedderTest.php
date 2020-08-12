@@ -54,7 +54,6 @@ class EnrolmentEventsEmbedderTest extends UtilCoreTestCase
         $embedded = $embedder->embedded($enrolment, $req);
 
         $this->assertEquals('qa.mygo1.com', $embedded['portal']->title);
-        $this->assertEquals($this->profileId, $embedded['account']->profile_id);
         $this->assertEquals('course', $embedded['lo']->type);
     }
 }
