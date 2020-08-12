@@ -24,12 +24,6 @@ class PlanCreateEventEmbedder
         $portal = PortalHelper::load($this->go1, $plan->instanceId);
         if ($portal) {
             $embedded['portal'] = $portal;
-
-            $user = UserHelper::load($this->go1, $plan->userId, null, 'mail');
-            $account = $user ? UserHelper::loadByEmail($this->go1, $portal->title, $user->mail) : null;
-            if ($account) {
-                $embedded['account'] = $account;
-            }
         }
 
         if (PlanTypes::ENTITY_LO == $plan->entityType) {
