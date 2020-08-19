@@ -69,6 +69,7 @@ class PortalChecker
         return !empty($portal->configuration->public_writing) ? $portal->configuration->public_writing : false;
     }
 
+    /** @deprecated */
     public function allowSendingWelcomeEmail($portal)
     {
         if ($this->isLegacy($portal)) {
