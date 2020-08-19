@@ -170,6 +170,19 @@ class LoExploreSchema
                     ],
                 ],
             ],
+            'custom_fields' => [
+                'type'       => Schema::T_NESTED,
+                'properties' => [
+                    'field_string' => [
+                        'type'       => Schema::T_NESTED,
+                        'properties' => [
+                            'field_id'            => ['type' => Schema::T_INT],
+                            'field_name'          => ['type' => Schema::T_KEYWORD],
+                            'field_string_values' => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                        ]
+                    ],
+                ]
+            ],
             'events'         => [
                 'type'       => Schema::T_NESTED,
                 'properties' => [
