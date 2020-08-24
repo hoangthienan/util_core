@@ -9,6 +9,9 @@ use go1\util\edge\EdgeHelper;
 use go1\util\edge\EdgeTypes;
 use PDO;
 
+/**
+ * @deprecated No useful methods.
+ */
 class ManagerHelper
 {
     /**
@@ -40,8 +43,7 @@ class ManagerHelper
     }
 
     /**
-     * @TODO: Remove DB access.
-     *
+     * @deprecated Use UserDomainHelper::managerUserIds($learnerAccountId)
      */
     public static function userManagerIds(Connection $go1, int $accountId): array
     {
