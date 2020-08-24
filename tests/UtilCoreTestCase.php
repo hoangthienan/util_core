@@ -32,10 +32,10 @@ class UtilCoreTestCase extends TestCase
 
     protected $schemaClasses = [
         AwardSchema::class,
-        CollectionSchema::class
+        CollectionSchema::class,
     ];
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->go1 = DriverManager::getConnection(['url' => 'sqlite://sqlite::memory:']);
         $this->installGo1Schema($this->go1, false, 'accounts.test');

@@ -9,11 +9,12 @@
         }
     },
     "require":           {
-        "php":                     "^7.2",
+        "php":                     "^7.4",
         "doctrine/dbal":           "^2.8.0",
         "firebase/php-jwt":        "^5.0",
         "go1/kv":                  "^0.2",
         "go1/flood":               "^0.6",
+        "go1.core/util":           "dev-master",
         "ramsey/uuid":             "^3.4",
         "symfony/http-foundation": "^4.0 | ^3.4",
         "pimple/pimple":           "^v3.0.0",
@@ -26,5 +27,8 @@
         "go1/app":               "for go1\\util\\DB::connectionOptions()",
         "go1/util_core_clients": "If you would like making requests to core-services.",
         "ezyang/htmlpurifier":   "for go1\\util\\Text"
-    }
+    },
+    "repositories":      [
+        { "type": "vcs", "url": "https://code.go1.com.au/mirror/go1-core/util.git" }
+    ]
 }

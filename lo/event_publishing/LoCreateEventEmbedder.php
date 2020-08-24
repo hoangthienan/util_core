@@ -3,23 +3,26 @@
 namespace go1\util\lo\event_publishing;
 
 use Doctrine\DBAL\Connection;
+use go1\core\util\client\federation_api\v1\UserMapper;
+use go1\core\util\client\UserDomainHelper;
 use go1\util\AccessChecker;
 use go1\util\edge\EdgeHelper;
 use go1\util\edge\EdgeTypes;
 use go1\util\portal\PortalHelper;
-use go1\util\user\UserHelper;
 use stdClass;
 use Symfony\Component\HttpFoundation\Request;
 
 class LoCreateEventEmbedder
 {
-    protected $go1;
-    protected $access;
+    protected Connection        $go1;
+    protected AccessChecker     $access;
+    protected UserDomainHelper  $userDomainHelper;
 
-    public function __construct(Connection $go1, AccessChecker $access)
+    public function __construct(Connection $go1, AccessChecker $access, UserDomainHelper $userDomainHelper)
     {
         $this->go1 = $go1;
         $this->access = $access;
+        $this->userDomainHelper = $userDomainHelper;
     }
 
     protected function embedAuthors(array &$embedded, int $loId)
@@ -32,10 +35,10 @@ class LoCreateEventEmbedder
         }
 
         if (!empty($userIds)) {
-            $users = UserHelper::loadMultiple($this->go1, $userIds);
+            $users = $this->userDomainHelper->loadMultipleUsers($userIds);
             if ($users) {
                 foreach ($users as &$user) {
-                    $embedded['authors'][] = $user;
+                    $embedded['authors'][] = UserMapper::toLegacyStandardFormat('', $user);
                 }
             }
         }

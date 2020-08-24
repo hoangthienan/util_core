@@ -10,7 +10,6 @@ use go1\util\enrolment\EnrolmentHelper;
 use go1\util\lo\LoChecker;
 use go1\util\portal\PortalHelper;
 use go1\util\user\Roles;
-use go1\util\user\UserHelper;
 use PDO;
 use stdClass;
 use Symfony\Component\HttpFoundation\Request;
@@ -142,7 +141,7 @@ class AccessChecker
         return $payload->usedCreds ?? false;
     }
 
-    public function validUser(Request $req, $portalName = null, Connection $db = null)
+    public function validUser(Request $req, $portalName = null)
     {
         $payload = $req->attributes->get('jwt.payload');
         if ($payload && !empty($payload->object->type) && ('user' === $payload->object->type)) {
@@ -159,17 +158,6 @@ class AccessChecker
             foreach ($accounts as $account) {
                 if ($portalName == $account->instance) {
                     return $account;
-                }
-            }
-
-            // @TODO: To be removed this logic
-            if ($db) {
-                $account = UserHelper::loadByEmail($db, $portalName, $user->mail);
-                if (is_object($account)) {
-                    $hasLink = EdgeHelper::hasLink($db, EdgeTypes::HAS_ACCOUNT_VIRTUAL, $user->id, $account->id);
-                    if ($hasLink) {
-                        return $account;
-                    }
                 }
             }
         }

@@ -3,14 +3,17 @@
 namespace go1\util\lo;
 
 use Doctrine\DBAL\Connection;
+use go1\core\util\client\federation_api\v1\schema\object\User;
+use go1\core\util\client\federation_api\v1\UserMapper;
+use go1\core\util\client\UserDomainHelper;
 use go1\util\DB;
 use go1\util\edge\EdgeHelper;
 use go1\util\edge\EdgeTypes;
 use go1\util\enrolment\EnrolmentHelper;
-use go1\util\user\UserHelper;
 use HTMLPurifier_Config;
 use PDO;
 use stdClass;
+use function array_map;
 
 class LoHelper
 {
@@ -164,7 +167,6 @@ class LoHelper
             }
         }
 
-
         # Load events.
         $learningObjects && static::attachEvents($db, $learningObjects, $loIds);
 
@@ -209,7 +211,6 @@ class LoHelper
 
         return $arr;
     }
-
 
     private static function attachEvents(Connection $db, array &$los, array &$loIds)
     {
@@ -355,9 +356,11 @@ class LoHelper
         return $cnf;
     }
 
-    public static function sanitizeTitle(string $title = "") {
+    public static function sanitizeTitle(string $title = "")
+    {
         // HTML Decode Characters, replace br and new lines with spaces
         $title = preg_replace("/(<br\W*?\/?>)|(\s+)/im", " ", html_entity_decode($title, ENT_QUOTES));
+
         // Strip tags and trim
         return trim(strip_tags($title));
     }
@@ -524,11 +527,18 @@ class LoHelper
             ->get($db, [$loId], [], [EdgeTypes::HAS_AUTHOR_EDGE], PDO::FETCH_COLUMN);
     }
 
-    public static function authors(Connection $db, int $loId): array
+    public static function authors(Connection $db, UserDomainHelper $userDomainHelper, int $loId): array
     {
         $authorIds = self::authorIds($db, $loId);
+        $authorIds = array_map('intval', $authorIds);
+        $authors = !$authorIds ? [] : array_map(
+            function (User $user) {
+                return UserMapper::toLegacyStandardFormat('', $user);
+            },
+            $userDomainHelper->loadMultipleUsers($authorIds)
+        );
 
-        return !$authorIds ? [] : UserHelper::loadMultiple($db, array_map('intval', $authorIds));
+        return $authors;
     }
 
     public static function getSuggestedCompletion(Connection $db, int $loId, int $parentId = 0): array

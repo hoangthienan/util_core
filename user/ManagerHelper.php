@@ -3,9 +3,12 @@
 namespace go1\util\user;
 
 use Doctrine\DBAL\Connection;
+use go1\core\util\client\federation_api\v1\schema\object\PortalAccountRole;
+use go1\core\util\client\UserDomainHelper;
 use go1\util\edge\EdgeHelper;
 use go1\util\edge\EdgeTypes;
 use PDO;
+use function array_filter;
 
 class ManagerHelper
 {
@@ -22,13 +25,16 @@ class ManagerHelper
         return EdgeHelper::hasLink($go1, EdgeTypes::HAS_MANAGER, $studentAccountId, $managerUserId);
     }
 
-    public static function isManagerUser(Connection $go1, int $managerAccountId, string $instance): bool
+    public static function isManagerUser(UserDomainHelper $userDomainHelper, int $managerAccountId, string $portalName): bool
     {
-        if (!$roleId = UserHelper::roleId($go1, Roles::MANAGER, $instance)) {
+        $account = $userDomainHelper->loadPortalAccount($managerAccountId, $portalName);
+        if (!$account) {
             return false;
         }
 
-        return EdgeHelper::hasLink($go1, EdgeTypes::HAS_ROLE, $managerAccountId, $roleId);
+        $managerRoles = array_filter($account->roles, fn(PortalAccountRole $role) => $role->name === 'ASSESSOR');
+
+        return count($managerRoles) ? true : false;
     }
 
     public static function userManagerIds(Connection $go1, int $accountId): array
