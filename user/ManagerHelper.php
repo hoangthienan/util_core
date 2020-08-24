@@ -8,10 +8,12 @@ use go1\core\util\client\UserDomainHelper;
 use go1\util\edge\EdgeHelper;
 use go1\util\edge\EdgeTypes;
 use PDO;
-use function array_filter;
 
 class ManagerHelper
 {
+    /**
+     * @deprecated Use UserDomainHelper::isManager($portalName, $managerAccountId, $learnerAccountId)
+     */
     public static function isManagerOfUser(Connection $go1, string $portalName, int $managerUserId, int $studentId): bool
     {
         # From instance & user ID, we find account ID.
@@ -37,6 +39,10 @@ class ManagerHelper
         return count($managerRoles) ? true : false;
     }
 
+    /**
+     * @TODO: Remove DB access.
+     *
+     */
     public static function userManagerIds(Connection $go1, int $accountId): array
     {
         $sql = 'SELECT ro.target_id FROM gc_ro ro ';
