@@ -31,7 +31,9 @@ class PortalHelper
     const LOCALE_DEFAULT                       = 'AU';
     const FEATURE_CREDIT                       = 'credit';
     const FEATURE_CREDIT_DEFAULT               = true;
+    /** @deprecated  */
     const FEATURE_SEND_WELCOME_EMAIL           = 'send_welcome_email';
+    /** @deprecated  */
     const FEATURE_SEND_WELCOME_EMAIL_DEFAULT   = true;
     const FEATURE_CUSTOM_SMTP                  = 'custom_smtp';
     const FEATURE_CREDIT_REQUEST               = 'credit_request';
