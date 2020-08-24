@@ -10,6 +10,8 @@
     },
     "require":           {
         "php":                     "^7.4",
+        "ext-pdo":                 "*",
+        "ext-json":                "*",
         "doctrine/dbal":           "^2.8.0",
         "firebase/php-jwt":        "^5.0",
         "go1/kv":                  "^0.2",

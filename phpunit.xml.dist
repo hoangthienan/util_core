@@ -3,7 +3,7 @@
 <phpunit
         colors="true"
         bootstrap="vendor/autoload.php"
-        stopOnFailure="true">
+        stopOnFailure="false">
     <testsuites>
         <testsuite name="go1_util_core">
             <directory>./tests</directory>

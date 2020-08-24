@@ -6,6 +6,8 @@ use Doctrine\DBAL\Connection;
 use Exception;
 use go1\clients\MqClient;
 use go1\clients\UserClient;
+use go1\core\util\client\federation_api\v1\schema\object\User;
+use go1\core\util\client\federation_api\v1\UserMapper;
 use go1\util\collection\PortalCollectionConfiguration;
 use go1\util\DB;
 use go1\util\edge\EdgeTypes;
@@ -25,15 +27,15 @@ class PortalHelper
     const WEBSITE_DEV_INSTANCE       = 'dev.mygo1.com';
     const CUSTOM_DOMAIN_DEFAULT_HOST = 'go1portals.com';
 
-    const LANGUAGE                             = 'language';
-    const LANGUAGE_DEFAULT                     = 'en';
-    const LOCALE                               = 'locale';
-    const LOCALE_DEFAULT                       = 'AU';
-    const FEATURE_CREDIT                       = 'credit';
-    const FEATURE_CREDIT_DEFAULT               = true;
-    /** @deprecated  */
-    const FEATURE_SEND_WELCOME_EMAIL           = 'send_welcome_email';
-    /** @deprecated  */
+    const LANGUAGE               = 'language';
+    const LANGUAGE_DEFAULT       = 'en';
+    const LOCALE                 = 'locale';
+    const LOCALE_DEFAULT         = 'AU';
+    const FEATURE_CREDIT         = 'credit';
+    const FEATURE_CREDIT_DEFAULT = true;
+    /** @deprecated */
+    const FEATURE_SEND_WELCOME_EMAIL = 'send_welcome_email';
+    /** @deprecated */
     const FEATURE_SEND_WELCOME_EMAIL_DEFAULT   = true;
     const FEATURE_CUSTOM_SMTP                  = 'custom_smtp';
     const FEATURE_CREDIT_REQUEST               = 'credit_request';
@@ -194,11 +196,14 @@ class PortalHelper
         return $adminIds ?? [];
     }
 
-    public static function portalAdmins(Connection $db, UserClient $userClient, string $portalName): array
+    public static function portalAdmins(UserClient $userClient, string $portalName): array
     {
         $adminIds = self::portalAdminIds($userClient, $portalName);
         $adminIds = array_map('intval', $adminIds);
-        $admins = !$adminIds ? [] : $userClient->helper()->loadMultipleUsers($adminIds);
+        $admins = !$adminIds ? [] : array_map(
+            function (User $user) { return UserMapper::toLegacyStandardFormat('', $user); },
+            $userClient->helper()->loadMultipleUsers($adminIds)
+        );
 
         return $admins;
     }

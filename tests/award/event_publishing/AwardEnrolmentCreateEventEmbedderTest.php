@@ -23,7 +23,7 @@ class AwardEnrolmentCreateEventEmbedderTest extends UtilCoreTestCase
     protected $awardId;
     protected $awardEnrolmentId;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -41,7 +41,7 @@ class AwardEnrolmentCreateEventEmbedderTest extends UtilCoreTestCase
     {
         $c = $this->getContainer();
         $awardEnrolment = AwardHelper::loadEnrolment($this->go1, $this->awardEnrolmentId);
-        $embedder = new AwardEnrolmentCreateEventEmbedder($this->go1, $this->go1, $c['access_checker']);
+        $embedder = new AwardEnrolmentCreateEventEmbedder($this->go1, $this->go1, $c['access_checker'], $c['go1.client.user-domain-helper']);
         $req = Request::create('/', 'POST');
         $req->attributes->set('jwt.payload', Text::jwtContent($this->jwt));
         $embedded = $embedder->embedded($awardEnrolment, $req);
@@ -50,6 +50,6 @@ class AwardEnrolmentCreateEventEmbedderTest extends UtilCoreTestCase
         $this->assertEquals('qa.mygo1.com', $embedded['portal']->title);
         $this->assertEquals($this->awardId, $embedded['award']->id);
         $this->assertEquals('Example award', $embedded['award']->title);
-        $this->assertEquals($this->accountId, $embedded['account']->id);
+        $this->assertEquals($this->accountId, $embedded['account']['id']);
     }
 }

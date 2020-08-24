@@ -42,17 +42,18 @@ class PortalHelperTest extends UtilCoreTestCase
 
     public function testPortalAdminIds()
     {
+        $container = $this->getContainer(true);
         $admin1Id = $this->createUser($this->go1, ['instance' => $this->portalName, 'mail' => 'a1@mail.com']);
         $admin2Id = $this->createUser($this->go1, ['instance' => $this->portalName, 'mail' => 'a2@mail.com']);
         $this->createUser($this->go1, ['instance' => $this->portalName, 'mail' => 'a3@mail.com']);
         $adminIds = [$admin1Id, $admin2Id];
 
         $app = $this->getContainer();
-        $app['go1.client.user'] = function () use ($adminIds) {
+        $app['go1.client.user'] = function () use ($container, $adminIds) {
             $userClient = $this
                 ->getMockBuilder(UserClient::class)
                 ->disableOriginalConstructor()
-                ->setMethods(['findAdministrators'])
+                ->setMethods(['findAdministrators', 'helper'])
                 ->getMock();
 
             $userClient
@@ -63,6 +64,10 @@ class PortalHelperTest extends UtilCoreTestCase
                         yield (object) ['id' => $adminId];
                     }
                 });
+
+            $userClient
+                ->method('helper')
+                ->willReturn($container['go1.client.user-domain-helper']);
 
             return $userClient;
         };
@@ -80,15 +85,14 @@ class PortalHelperTest extends UtilCoreTestCase
     /** @depends testPortalAdminIds */
     public function testPortalAdmins(array $params)
     {
-        list($userClient) = $params;
+        [$userClient] = $params;
         $admin1Id = $this->createUser($this->go1, ['instance' => $this->portalName, 'mail' => 'a1@mail.com']);
         $admin2Id = $this->createUser($this->go1, ['instance' => $this->portalName, 'mail' => 'a2@mail.com']);
 
-        $admins = PortalHelper::portalAdmins($this->go1, $userClient, $this->portalName);
-
+        $admins = PortalHelper::portalAdmins($userClient, $this->portalName);
         $this->assertEquals(2, count($admins));
-        $this->assertEquals($admin1Id, $admins[0]->id);
-        $this->assertEquals($admin2Id, $admins[1]->id);
+        $this->assertEquals($admin1Id, $admins[0]['id']);
+        $this->assertEquals($admin2Id, $admins[1]['id']);
     }
 
     public function testLanguage()
@@ -152,7 +156,8 @@ class PortalHelperTest extends UtilCoreTestCase
         $this->assertEquals($customerID, $portalData->data->portal_data->customer_id);
     }
 
-    public function testDNSCheck() {
+    public function testDNSCheck()
+    {
         $result = PortalHelper::validateCustomDomainDNS(PortalHelper::CUSTOM_DOMAIN_DEFAULT_HOST);
         $this->assertEquals($result, true);
     }

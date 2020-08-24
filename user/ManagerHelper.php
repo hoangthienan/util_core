@@ -32,7 +32,7 @@ class ManagerHelper
             return false;
         }
 
-        $managerRoles = array_filter($account->roles, fn(PortalAccountRole $role) => $role->name === 'ASSESSOR');
+        $managerRoles = array_filter($account->roles ?? [], fn(PortalAccountRole $role) => in_array($role->name, ['ASSESSOR', 'MANAGER']));
 
         return count($managerRoles) ? true : false;
     }
