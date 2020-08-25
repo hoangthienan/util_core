@@ -194,12 +194,15 @@ class AccessChecker
         return false;
     }
 
+    /**
+     * @deprecated Use UserDomainHelper::isManager($portalName, $managerPortalAccountLegacyId, $portalAccountLegacyId)
+     */
     public function isStudentManager(Connection $db, Request $req, string $studentMail, string $portalName)
     {
         if (!$user = $this->validUser($req)) {
             return false;
         }
-
+        
         return $db->fetchColumn(
             'SELECT 1 FROM gc_ro'
             . ' WHERE type = ?'

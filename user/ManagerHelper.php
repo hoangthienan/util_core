@@ -4,7 +4,6 @@ namespace go1\util\user;
 
 use Doctrine\DBAL\Connection;
 use go1\core\util\client\federation_api\v1\schema\object\PortalAccountRole;
-use go1\core\util\client\UserDomainHelper;
 use go1\util\edge\EdgeHelper;
 use go1\util\edge\EdgeTypes;
 use PDO;
@@ -15,7 +14,11 @@ use PDO;
 class ManagerHelper
 {
     /**
+     * <<<<<<< HEAD
      * @deprecated Use UserDomainHelper::isManager($portalName, $managerAccountId, $learnerAccountId)
+     * =======
+     * @deprecated Use UserDomainHelper::isManager($portalName, $managerPortalAccountLegacyId, $portalAccountLegacyId)
+     * >>>>>>> 697213ddc05189f19b588c09922d2e2f5f906947
      */
     public static function isManagerOfUser(Connection $go1, string $portalName, int $managerUserId, int $studentId): bool
     {
@@ -30,10 +33,12 @@ class ManagerHelper
         return EdgeHelper::hasLink($go1, EdgeTypes::HAS_MANAGER, $studentAccountId, $managerUserId);
     }
 
-    public static function isManagerUser(UserDomainHelper $userDomainHelper, int $managerAccountId, string $portalName): bool
+    /**
+     * @deprecated Use UserDomainHelper::isManager($portalName, $managerPortalAccountLegacyId, $portalAccountLegacyId)
+     */
+    public static function isManagerUser(Connection $go1, int $managerAccountId, string $portalName): bool
     {
-        $account = $userDomainHelper->loadPortalAccount($managerAccountId, $portalName);
-        if (!$account) {
+        if (!$roleId = UserHelper::roleId($go1, Roles::MANAGER, $portalName)) {
             return false;
         }
 
