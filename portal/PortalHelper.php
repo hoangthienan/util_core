@@ -3,15 +3,17 @@
 namespace go1\util\portal;
 
 use Doctrine\DBAL\Connection;
+use Exception;
 use go1\clients\MqClient;
 use go1\clients\UserClient;
+use go1\core\util\client\federation_api\v1\schema\object\User;
+use go1\core\util\client\federation_api\v1\UserMapper;
 use go1\util\collection\PortalCollectionConfiguration;
 use go1\util\DB;
 use go1\util\edge\EdgeTypes;
 use go1\util\queue\Queue;
-use go1\util\user\UserHelper;
 use stdClass;
-use Exception;
+use function array_map;
 
 class PortalHelper
 {
@@ -23,17 +25,17 @@ class PortalHelper
     const WEBSITE_STAGING_INSTANCE   = 'staging.mygo1.com';
     const WEBSITE_QA_INSTANCE        = 'qa.go1.cloud';
     const WEBSITE_DEV_INSTANCE       = 'dev.mygo1.com';
-    CONST CUSTOM_DOMAIN_DEFAULT_HOST = 'go1portals.com';
+    const CUSTOM_DOMAIN_DEFAULT_HOST = 'go1portals.com';
 
-    const LANGUAGE                             = 'language';
-    const LANGUAGE_DEFAULT                     = 'en';
-    const LOCALE                               = 'locale';
-    const LOCALE_DEFAULT                       = 'AU';
-    const FEATURE_CREDIT                       = 'credit';
-    const FEATURE_CREDIT_DEFAULT               = true;
-    /** @deprecated  */
-    const FEATURE_SEND_WELCOME_EMAIL           = 'send_welcome_email';
-    /** @deprecated  */
+    const LANGUAGE               = 'language';
+    const LANGUAGE_DEFAULT       = 'en';
+    const LOCALE                 = 'locale';
+    const LOCALE_DEFAULT         = 'AU';
+    const FEATURE_CREDIT         = 'credit';
+    const FEATURE_CREDIT_DEFAULT = true;
+    /** @deprecated */
+    const FEATURE_SEND_WELCOME_EMAIL = 'send_welcome_email';
+    /** @deprecated */
     const FEATURE_SEND_WELCOME_EMAIL_DEFAULT   = true;
     const FEATURE_CUSTOM_SMTP                  = 'custom_smtp';
     const FEATURE_CREDIT_REQUEST               = 'credit_request';
@@ -50,10 +52,10 @@ class PortalHelper
         PortalCollectionConfiguration::SHARE,
     ];
 
-    CONST PLAYER_APP_PREFIX = 'play';
-    CONST REACT_APP_PREFIX = 'r';
-    CONST DEFAULT_APP_PREFIX = 'p/#';
-    CONST DEFAULT_WEB_APP = 'webapp/#';
+    const PLAYER_APP_PREFIX  = 'play';
+    const REACT_APP_PREFIX   = 'r';
+    const DEFAULT_APP_PREFIX = 'p/#';
+    const DEFAULT_WEB_APP    = 'webapp/#';
 
     public static function load(Connection $go1, $nameOrId, $columns = '*', bool $aliasSupport = false, bool $includePortalData = false): ?stdClass
     {
@@ -194,11 +196,16 @@ class PortalHelper
         return $adminIds ?? [];
     }
 
-    public static function portalAdmins(Connection $db, UserClient $userClient, string $portalName): array
+    public static function portalAdmins(UserClient $userClient, string $portalName): array
     {
         $adminIds = self::portalAdminIds($userClient, $portalName);
+        $adminIds = array_map('intval', $adminIds);
+        $admins = !$adminIds ? [] : array_map(
+            function (User $user) { return UserMapper::toLegacyStandardFormat('', $user); },
+            $userClient->helper()->loadMultipleUsers($adminIds)
+        );
 
-        return !$adminIds ? [] : UserHelper::loadMultiple($db, array_map('intval', $adminIds));
+        return $admins;
     }
 
     public static function language(stdClass $portal)

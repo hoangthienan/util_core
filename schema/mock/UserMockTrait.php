@@ -19,7 +19,7 @@ trait UserMockTrait
 {
     protected function defaultUserMail()
     {
-        return 'thehongtt@gmail.com';
+        return 'john.doe@qa.local';
     }
 
     protected function defautlUserPass()
@@ -100,7 +100,7 @@ trait UserMockTrait
             'exp'       => strtotime('+ 1 year'),
             'sid'       => $sid,
             'usedCreds' => $usedCreds ? 1 : 0,
-            'object'    => (object)[
+            'object'    => (object) [
                 'type'    => 'user',
                 'content' => call_user_func(
                     function () use ($db, $userId, $portalName) {
@@ -109,7 +109,7 @@ trait UserMockTrait
 
                         if ($user && !empty($user->accounts[0])) {
                             $account = &$user->accounts[0];
-                            $account->portalId = (int)$db->fetchColumn('SELECT id FROM gc_instance WHERE title = ?', [$account->instance]);
+                            $account->portalId = (int) $db->fetchColumn('SELECT id FROM gc_instance WHERE title = ?', [$account->instance]);
                         }
 
                         return $user;
@@ -124,7 +124,6 @@ trait UserMockTrait
     }
 
     /**
-     * @deprecated
      * @param string $mail
      * @param string $accountName
      * @param string $portalName
@@ -135,9 +134,10 @@ trait UserMockTrait
      * @param int    $userId
      * @param bool   $encode
      * @return object|string
+     * @deprecated
      */
     protected function getJwt(
-        $mail = 'thehongtt@gmail.com',
+        $mail = 'john.doe@qa.local',
         $accountName = 'accounts.gocatalyze.com',
         $portalName = 'az.mygo1.com',
         $roles = ['authenticated'],
@@ -177,7 +177,7 @@ trait UserMockTrait
         $accountProfileId = isset($options['profile_id']) ? $options['profile_id'] : DEFAULT_ACCOUNT_PROFILE_ID;
         $userId = isset($options['user_id']) ? $options['user_id'] : $accountId;
         $userProfileId = isset($options['user_profile_id']) ? $options['user_profile_id'] : $accountProfileId;
-        $mail = isset($options['mail']) ? $options['mail'] : 'thehongtt@gmail.com';
+        $mail = isset($options['mail']) ? $options['mail'] : 'john.doe@qa.local';
         $roles = isset($options['roles']) ? $options['roles'] : ['authenticated'];
 
         $account = [
@@ -233,7 +233,7 @@ trait UserMockTrait
             'last_name'     => 'T',
             'instance_name' => $accountsName,
             'profile_id'    => intval($userProfileId),
-            'mail'          => $mail = isset($options['mail']) ? $options['mail'] : 'thehongtt@gmail.com',
+            'mail'          => $mail = isset($options['mail']) ? $options['mail'] : 'john.doe@qa.local',
             'roles'         => isset($options['roles'][$accountsName]) ? $options['roles'][$accountsName] : ['authenticated'],
         ];
 
