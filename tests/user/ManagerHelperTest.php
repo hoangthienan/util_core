@@ -32,9 +32,6 @@ class ManagerHelperTest extends UtilCoreTestCase
 
     public function testIsManagerUser()
     {
-        $c = $this->getContainer(true);
-        $helper = $c['go1.client.user-domain-helper'];
-
         // Setup data
         $this->createPortal($this->go1, ['title' => 'az.mygo1.com']);
         $managerRoleId = $this->createRole($this->go1, ['instance' => 'az.mygo1.com', 'name' => Roles::MANAGER]);
@@ -42,8 +39,8 @@ class ManagerHelperTest extends UtilCoreTestCase
         EdgeHelper::link($this->go1, $this->queue, EdgeTypes::HAS_ROLE, $managerAccountId, $managerRoleId);
 
         // Check
-        $this->assertTrue(ManagerHelper::isManagerUser($helper, $managerAccountId, 'az.mygo1.com'));
-        $this->assertFalse(ManagerHelper::isManagerUser($helper, $managerAccountId, 'qa.mygo1.com'));
+        $this->assertTrue(ManagerHelper::isManagerUser($this->go1, $managerAccountId, 'az.mygo1.com'));
+        $this->assertFalse(ManagerHelper::isManagerUser($this->go1, $managerAccountId, 'qa.mygo1.com'));
     }
 
     public function testUserManagerIds()

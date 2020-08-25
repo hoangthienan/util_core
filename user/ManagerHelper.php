@@ -3,7 +3,6 @@
 namespace go1\util\user;
 
 use Doctrine\DBAL\Connection;
-use go1\core\util\client\federation_api\v1\schema\object\PortalAccountRole;
 use go1\util\edge\EdgeHelper;
 use go1\util\edge\EdgeTypes;
 use PDO;
@@ -14,11 +13,7 @@ use PDO;
 class ManagerHelper
 {
     /**
-     * <<<<<<< HEAD
-     * @deprecated Use UserDomainHelper::isManager($portalName, $managerAccountId, $learnerAccountId)
-     * =======
      * @deprecated Use UserDomainHelper::isManager($portalName, $managerPortalAccountLegacyId, $portalAccountLegacyId)
-     * >>>>>>> 697213ddc05189f19b588c09922d2e2f5f906947
      */
     public static function isManagerOfUser(Connection $go1, string $portalName, int $managerUserId, int $studentId): bool
     {
@@ -42,9 +37,7 @@ class ManagerHelper
             return false;
         }
 
-        $managerRoles = array_filter($account->roles ?? [], fn(PortalAccountRole $role) => in_array($role->name, ['ASSESSOR', 'MANAGER']));
-
-        return count($managerRoles) ? true : false;
+        return EdgeHelper::hasLink($go1, EdgeTypes::HAS_ROLE, $managerAccountId, $roleId);
     }
 
     /**
