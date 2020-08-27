@@ -182,6 +182,7 @@ class AwardSchema
             $itemEnrolment->addColumn('quantity', Type::FLOAT, ['default' => 0.0]);
             $itemEnrolment->addColumn('remote_id', Type::INTEGER, ['unsigned' => true]);
             $itemEnrolment->setPrimaryKey(['id']);
+            $itemEnrolment->addUniqueIndex(['award_id', 'user_id', 'instance_id', 'entity_id', 'type']);
             $itemEnrolment->addIndex(['award_id']);
             $itemEnrolment->addIndex(['user_id']);
             $itemEnrolment->addIndex(['instance_id']);
