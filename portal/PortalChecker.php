@@ -152,35 +152,16 @@ class PortalChecker
         $env = (getenv('MONOLITH') && getenv('ENV_HOSTNAME')) ? 'monolith' : (getenv('ENV') ?: 'production');
 
         switch ($env) {
-            case 'production':
+            case 'monolith':
+                $domain = getenv('ENV_HOSTNAME');
+                break;
+            default:
                 if ($replacePublicDomain && PortalHelper::WEBSITE_PUBLIC_INSTANCE == $portal->title) {
                     $domain = PortalHelper::WEBSITE_DOMAIN;
                 } else {
                     $primaryDomain = $this->getPrimaryDomain($portal);
                     $domain = $this->isVirtual($portal) ? "{$primaryDomain}" : "{$primaryDomain}/" . PortalHelper::DEFAULT_WEB_APP;
                 }
-                break;
-
-            case 'staging':
-                // Supporting `ENV_HOSTNAME_QA` for keeping other places logic working as previously on staging
-                // @TODO provide a variable to set for $domain across env. Etc: setEnv('ENV_DOMAIN=yourDomain')
-                $domain = getenv('ENV_HOSTNAME_QA') ?: PortalHelper::WEBSITE_STAGING_INSTANCE;
-                break;
-
-            case 'qa':
-                $domain = getenv('ENV_HOSTNAME_QA') ?: PortalHelper::WEBSITE_QA_INSTANCE;
-                break;
-
-            case 'dev':
-                $domain = PortalHelper::WEBSITE_DEV_INSTANCE;
-                break;
-
-            case 'monolith':
-                $domain = getenv('ENV_HOSTNAME');
-                break;
-
-            default:
-                $domain = '';
                 break;
         }
 

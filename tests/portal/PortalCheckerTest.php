@@ -98,13 +98,11 @@ class PortalCheckerTest extends UtilCoreTestCase
             ['production', 'public.mygo1.com', '', '', 'https://www.go1.com/'],
             ['production', 'az.mygo1.com', 'embed-course/12345/', 'p/embed.html#', 'https://az.mygo1.com/p/embed.html#/embed-course/12345/'],
             ['production', 'az.mygo1.com', '123', 'play', 'https://az.mygo1.com/play/123'],
-            ['staging', 'staging.mygo1.com', '', 'p/#', 'https://staging.mygo1.com/p/#/'],
-            ['staging', 'staging.mygo1.com', '123', 'play', 'https://staging.mygo1.com/play/123'],
-            ['qa', 'qa.go1.cloud', '', 'p/#', 'https://qa.go1.cloud/p/#/'],
-            ['qa', 'qa.go1.cloud', '123', 'play', 'https://qa.go1.cloud/play/123'],
-            ['dev', 'dev.mygo1.com', '', 'p/#', 'https://dev.mygo1.com/p/#/'],
-            ['', 'dev.mygo1.com', '', 'p/#', 'https://dev.mygo1.com/p/#/'],
-            ['', 'dev.mygo1.com', '123', 'play', 'https://dev.mygo1.com/play/123'],
+            ['staging', 'az.mygo1.com', '', 'p/#', 'https://az.mygo1.com/p/#/'],
+            ['staging', 'az.mygo1.com', '123', 'play', 'https://az.mygo1.com/play/123'],
+            ['qa', 'az.mygo1.com', '', 'p/#', 'https://az.mygo1.com/p/#/'],
+            ['dev', 'az.mygo1.com', '', 'p/#', 'https://az.mygo1.com/p/#/'],
+            ['', 'az.mygo1.com', '', 'p/#', 'https://az.mygo1.com/p/#/'],
         ];
     }
 
