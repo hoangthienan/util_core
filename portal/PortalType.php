@@ -17,4 +17,5 @@ class PortalType extends ConstantContainer
     const COMPLISPACE          = 'complispace';
     const JSE_CUSTOMER         = 'jse_customer';
     const TOTARA_CUSTOMER      = 'totara_customer';
+    const TEAM                 = 'team';
 }
