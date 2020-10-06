@@ -161,4 +161,23 @@ class PortalHelperTest extends UtilCoreTestCase
         $result = PortalHelper::validateCustomDomainDNS(PortalHelper::CUSTOM_DOMAIN_DEFAULT_HOST);
         $this->assertEquals($result, true);
     }
+
+    public function dataEnv()
+    {
+        return [
+            ['dev', '', 'https://website.dev.go1.cloud'],
+            ['qa', '', 'https://website.qa.go1.cloud'],
+            ['production', '', 'https://www.go1.com'],
+            ['production', '/home', 'https://www.go1.com/home'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataEnv
+     */
+    public function testWebsiteDomain(string $env, string $uri, string $expectedDomain)
+    {
+        putenv("ENV=$env");
+        $this->assertEquals($expectedDomain, PortalHelper::getWebsiteDomain($uri));
+    }
 }
