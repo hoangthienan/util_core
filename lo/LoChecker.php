@@ -75,8 +75,15 @@ class LoChecker
         return isset($data[LoHelper::MANUAL_PAYMENT_RECIPIENT]) ? $data[LoHelper::MANUAL_PAYMENT_RECIPIENT] : '';
     }
 
-    public function singleLi(stdClass $li)
+    public function singleLi(stdClass $li): bool
     {
+        if ($isSingleLi = $li->single_li ?? false) {
+            return in_array($li->type, LiTypes::all())
+                ? boolval($isSingleLi)
+                : false;
+        }
+
+        # data.single_li - @deprecated
         $data = $this->loData($li);
 
         return isset($data['single_li']) ? ($data['single_li'] ? true : false) : false;
