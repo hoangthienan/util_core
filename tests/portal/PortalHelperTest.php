@@ -166,6 +166,7 @@ class PortalHelperTest extends UtilCoreTestCase
     {
         return [
             ['dev', '', 'https://website.dev.go1.cloud'],
+            ['staging', '', 'https://website.qa.go1.cloud'],
             ['qa', '', 'https://website.qa.go1.cloud'],
             ['production', '', 'https://www.go1.com'],
             ['production', '/home', 'https://www.go1.com/home'],

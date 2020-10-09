@@ -274,6 +274,7 @@ class PortalHelper
         switch ($env) {
             case 'dev':
                 return 'https://' . self::WEBSITE_DEV_DOMAIN . $uri;
+            case 'staging': // Keeping other places logic working as previously on staging
             case 'qa':
                 return 'https://' . self::WEBSITE_QA_DOMAIN . $uri;
             default:
