@@ -38,7 +38,7 @@ class DB
             }
         }
 
-        $isDevEnv = !in_array(self::getEnvByPriority(['_DOCKER_ENV', 'ENV']), ['staging', 'production']);
+        $isDevEnv = !in_array(self::getEnvByPriority(['_DOCKER_ENV', 'ENV']), ['qa', 'staging', 'production']);
         $dbName = $isDevEnv ? "{$name}_dev" : "{$name}_prod";
         if ('go1' === $name) {
             $dbName = $isDevEnv ? 'dev_go1' : 'gc_go1';
