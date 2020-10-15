@@ -34,6 +34,12 @@ class LoAttributes
     const ENTRY_LEVEL                   = 23;
     const LOCALE                        = 24;
     const REGION_RELEVANCE              = 25;
+    const CHECK_URL                     = 26;
+    const ROLES                         = 27;
+    const SKILLS                        = 28;
+    const SUBSCRIPTION_RENEWAL_DATE     = 29;
+    const PLAYLIST_TYPE                 = 30;
+    const PLAYBACK_TARGET               = 31;
 
     public static function machineName(int $attribute): ?string
     {
@@ -62,7 +68,13 @@ class LoAttributes
             self::FEATURED_TIMESTAMP        => 'featured_timestamp',
             self::ENTRY_LEVEL               => 'entry_level',
             self::LOCALE                    => 'locale',
-            self::REGION_RELEVANCE          => 'region_relevance'
+            self::REGION_RELEVANCE          => 'region_relevance',
+            self::CHECK_URL                 => 'check_url',
+            self::ROLES                     => 'roles',
+            self::SKILLS                    => 'skills',
+            self::SUBSCRIPTION_RENEWAL_DATE => 'subscription_renewal_date',
+            self::PLAYLIST_TYPE             => 'playlist_type',
+            self::PLAYBACK_TARGET           => 'playback_target',
         ];
 
         return $map[$attribute] ?? null;

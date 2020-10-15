@@ -22,7 +22,7 @@ class AwardCreateEventEmbedderTest extends UtilCoreTestCase
     protected $jwt;
     protected $awardId;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -37,15 +37,15 @@ class AwardCreateEventEmbedderTest extends UtilCoreTestCase
 
     public function test()
     {
-        $c = $this->getContainer();
+        $c = $this->getContainer(true);
         $award = AwardHelper::load($this->go1, $this->awardId);
-        $embedder = new AwardCreateEventEmbedder($this->go1, $c['access_checker']);
+        $embedder = new AwardCreateEventEmbedder($this->go1, $c['access_checker'], $c['go1.client.user-domain-helper']);
         $req = Request::create('/', 'POST');
         $req->attributes->set('jwt.payload', Text::jwtContent($this->jwt));
         $embedded = $embedder->embedded($award, $req);
 
         $this->assertEquals('qa.mygo1.com', $embedded['portal']->title);
-        $this->assertEquals($this->userId, $embedded['authors'][0]->id);
+        $this->assertEquals($this->userId, $embedded['authors'][0]['id']);
         $this->assertEquals('A', $embedded['jwt']['user']->first_name);
         $this->assertEquals('T', $embedded['jwt']['user']->last_name);
     }

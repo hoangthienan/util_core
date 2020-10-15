@@ -2,6 +2,7 @@
 
 namespace go1\util\tests;
 
+use Firebase\JWT\JWT;
 use go1\util\edge\EdgeTypes;
 use go1\util\schema\mock\PortalMockTrait;
 use go1\util\schema\mock\UserMockTrait;
@@ -22,13 +23,14 @@ class UserHelperTest extends UtilCoreTestCase
         $this->assertEquals($id, $user->id);
         $this->assertEquals('foo@bar.baz', $user->mail);
         $this->assertEquals('qa.mygo1.com', $user->instance);
+        $this->assertNull($user->user_uuid);
         $this->assertEquals(false, UserHelper::load($this->go1, 0));
         $this->assertEquals(false, UserHelper::load($this->go1, 999));
     }
 
     public function testLoadByInstance()
     {
-        $id = $this->createUser($this->go1, ['mail' => 'foo@bar.baz', 'instance' => 'qa.mygo1.com']);
+        $id = $this->createUser($this->go1, ['mail' => 'foo@bar.baz', 'instance' => 'qa.mygo1.com', 'user_uuid' => '1f998f26-05df-4130-a9f4-5eb040b18259']);
 
         $this->assertEquals(false, UserHelper::load($this->go1, 0, 'qa.mygo1.com'));
         $this->assertEquals(false, UserHelper::load($this->go1, 999, 'qa.mygo1.com'));
@@ -39,6 +41,7 @@ class UserHelperTest extends UtilCoreTestCase
         $this->assertEquals($id, $user->id);
         $this->assertEquals('foo@bar.baz', $user->mail);
         $this->assertEquals('qa.mygo1.com', $user->instance);
+        $this->assertEquals('1f998f26-05df-4130-a9f4-5eb040b18259', $user->user_uuid);
 
         $user = (array) UserHelper::load($this->go1, $id, 'qa.mygo1.com', 'mail');
         $this->assertCount(1, $user);
@@ -218,5 +221,46 @@ class UserHelperTest extends UtilCoreTestCase
         $user = UserHelper::loadMultiple($this->go1, [$uId1, $uId2], 'id, mail');
         $this->assertEquals((object) ['id' => $uId1, 'mail' => 'foo@bar.baz'], $user[0]);
         $this->assertEquals((object) ['id' => $uId2, 'mail' => 'foo@bar.qux'], $user[1]);
+    }
+
+    public function testPortalJWT()
+    {
+        $portal = (object)[
+            'title' => 'qa.go1.co',
+            'id'    => 30
+        ];
+        $jwt = UserHelper::getPortalJWT($portal);
+        $payload = JWT::decode($jwt, 'INTERNAL', ['HS256']);
+        $expectedPayload = (object)[
+            'iss'    => 'go1.user',
+            'ver'    => '1.0',
+            'exp'    => strtotime('+ 1 month'),
+            'object' =>
+                (object)[
+                    'type'    => 'user',
+                    'content' =>
+                        (object)[
+                            'id'         => 1,
+                            'profile_id' => 1,
+                            'mail'       => 'user.0@qa.go1.co',
+                            'name'       => 'public',
+                            'accounts'   =>
+                                [
+                                    (object)[
+                                        'id'         => 1,
+                                        'profile_id' => 1,
+                                        'instance'   => 'qa.go1.co',
+                                        'portal_id'  => 30,
+                                        'name'       => 'public',
+                                        'roles'      =>
+                                            [
+                                                'Student',
+                                            ],
+                                    ],
+                                ],
+                        ],
+                ],
+        ];
+        $this->assertEquals($expectedPayload, $payload);
     }
 }

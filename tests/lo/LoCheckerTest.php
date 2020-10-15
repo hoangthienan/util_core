@@ -67,4 +67,15 @@ class LoCheckerTest extends UtilCoreTestCase
         $lo2 = LoHelper::load($this->go1, $id2);
         $this->assertEquals(80, LoChecker::passRate($lo2));
     }
+
+    public function testSingleLi()
+    {
+        $videoId = $this->createVideo($this->go1, [
+            'instance_id'       => $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']),
+            LoHelper::SINGLE_LI => true,
+        ]);
+        $video = LoHelper::load($this->go1, $videoId);
+        $checker = new LoChecker;
+        $this->assertEquals(true, $checker->singleLi($video));
+    }
 }

@@ -7,8 +7,14 @@ use go1\util\edge\EdgeHelper;
 use go1\util\edge\EdgeTypes;
 use PDO;
 
+/**
+ * @deprecated No useful methods.
+ */
 class ManagerHelper
 {
+    /**
+     * @deprecated Use UserDomainHelper::isManager($portalName, $managerPortalAccountLegacyId, $portalAccountLegacyId)
+     */
     public static function isManagerOfUser(Connection $go1, string $portalName, int $managerUserId, int $studentId): bool
     {
         # From instance & user ID, we find account ID.
@@ -22,15 +28,21 @@ class ManagerHelper
         return EdgeHelper::hasLink($go1, EdgeTypes::HAS_MANAGER, $studentAccountId, $managerUserId);
     }
 
-    public static function isManagerUser(Connection $go1, int $managerAccountId, string $instance): bool
+    /**
+     * @deprecated Use UserDomainHelper::isManager($portalName, $managerPortalAccountLegacyId, $portalAccountLegacyId)
+     */
+    public static function isManagerUser(Connection $go1, int $managerAccountId, string $portalName): bool
     {
-        if (!$roleId = UserHelper::roleId($go1, Roles::MANAGER, $instance)) {
+        if (!$roleId = UserHelper::roleId($go1, Roles::MANAGER, $portalName)) {
             return false;
         }
 
         return EdgeHelper::hasLink($go1, EdgeTypes::HAS_ROLE, $managerAccountId, $roleId);
     }
 
+    /**
+     * @deprecated Use UserDomainHelper::managerUserIds($learnerAccountId)
+     */
     public static function userManagerIds(Connection $go1, int $accountId): array
     {
         $sql = 'SELECT ro.target_id FROM gc_ro ro ';

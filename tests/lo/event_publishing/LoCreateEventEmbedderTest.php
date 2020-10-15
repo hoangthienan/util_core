@@ -24,7 +24,7 @@ class LoCreateEventEmbedderTest extends UtilCoreTestCase
     protected $moduleId;
     protected $eventLiId;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -39,13 +39,14 @@ class LoCreateEventEmbedderTest extends UtilCoreTestCase
         $this->eventLiId = $this->createLO($this->go1, ['instance_id' => $this->portalId, 'type' => 'event']);
         $this->link($this->go1, EdgeTypes::HAS_MODULE, $this->courseId, $this->moduleId);
         $this->link($this->go1, EdgeTypes::HAS_LI, $this->moduleId, $this->eventLiId);
+        $this->link($this->go1, EdgeTypes::HAS_AUTHOR_EDGE, $this->eventLiId, $this->userId);
     }
 
     public function test()
     {
-        $c = $this->getContainer();
+        $c = $this->getContainer(true);
         $event = LoHelper::load($this->go1, $this->eventLiId);
-        $embedder = new LoCreateEventEmbedder($this->go1, $c['access_checker']);
+        $embedder = new LoCreateEventEmbedder($this->go1, $c['access_checker'], $c['go1.client.user-domain-helper']);
         $req = Request::create('/', 'POST');
         $req->attributes->set('jwt.payload', Text::jwtContent($this->jwt));
         $embedded = $embedder->embedded($event, $req);
@@ -53,5 +54,7 @@ class LoCreateEventEmbedderTest extends UtilCoreTestCase
         $this->assertEquals('qa.mygo1.com', $embedded['portal']->title);
         $this->assertEquals('A', $embedded['jwt']['user']->first_name);
         $this->assertEquals('T', $embedded['jwt']['user']->last_name);
+        $this->assertEquals('A', $embedded['authors'][0]['first_name']);
+        $this->assertEquals('T', $embedded['authors'][0]['last_name']);
     }
 }

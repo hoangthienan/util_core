@@ -27,33 +27,30 @@ class AccessCheckerTest extends UtilCoreTestCase
         $jwt = $this->jwtForUser($this->go1, $userId, 'qa.mygo1.com');
         $payload = Text::jwtContent($jwt);
         $req->attributes->set('jwt.payload', $payload);
+        $service = new AccessChecker;
 
-        // check by name
-        $account = (new AccessChecker)->validAccount($req, 'qa.mygo1.com');
-        $this->assertEquals($account->id, $accountId);
+        {
+            // check by name
+            $account = $service->validAccount($req, 'qa.mygo1.com');
+            $this->assertEquals($account->id, $accountId);
+        }
 
-        // check by ID
-        $account = (new AccessChecker)->validAccount($req, $portalId);
-        $this->assertEquals($account->id, $accountId);
-    }
+        {
+            // check by ID
+            $account = $service->validAccount($req, $portalId);
+            $this->assertEquals($account->id, $accountId);
+        }
 
-    public function testVirtualAccount()
-    {
-        $userId = $this->createUser($this->go1, ['instance' => 'accounts.gocatalyze.com']);
-        $portalName = 'portal.mygo1.com';
-        $accountId = $this->createUser($this->go1, ['instance' => $portalName]);
-        $this->link($this->go1, EdgeTypes::HAS_ACCOUNT_VIRTUAL, $userId, $accountId);
+        {
+            // test usedCreds
+            $this->assertFalse($service->usedCredentials($req));
 
-        $payload = $this->getPayload([]);
-        $req = new Request;
-        $req->attributes->set('jwt.payload', $payload);
-
-        $access = new AccessChecker();
-        $account1 = $access->validUser($req, $portalName);
-        $this->assertFalse($account1);
-
-        $account2 = $access->validUser($req, $portalName, $this->go1);
-        $this->assertEquals($accountId, $account2->id);
+            $jwt = $this->jwtForUser($this->go1, $userId, 'qa.mygo1.com');
+            $payload = Text::jwtContent($jwt);
+            $payload->usedCreds = 1;
+            $req->attributes->set('jwt.payload', $payload);
+            $this->assertTrue($service->usedCredentials($req));
+        }
     }
 
     public function testIsStudentManager()
@@ -82,7 +79,7 @@ class AccessCheckerTest extends UtilCoreTestCase
         $this->link($this->go1, EdgeTypes::HAS_ACCOUNT, $userId, $accountId);
         $this->link($this->go1, EdgeTypes::HAS_ROLE, $userId, $this->createAccountsAdminRole($this->go1, ['instance' => $accountsName]));
         $this->link($this->go1, EdgeTypes::HAS_ROLE, $accountId, $this->createPortalAdminRole($this->go1, ['instance' => $portalName]));
-        
+
         $req = new Request;
         $access = new AccessChecker;
         $req->attributes->set('jwt.payload', JWT::decode($this->jwtForUser($this->go1, $userId, $portalName), 'INTERNAL', ['HS256']));
@@ -118,5 +115,52 @@ class AccessCheckerTest extends UtilCoreTestCase
         $this->assertFalse((bool) $accessChecker->isPortalAdmin($req, $portalName, Roles::ADMIN, false));
         $this->assertTrue((bool) $accessChecker->isContentAdministrator($req, $portalName));
         $this->assertTrue((bool) $accessChecker->isContentAdministrator($req, $portalName, Roles::ADMIN, false));
+    }
+
+    public function testGetAccessToken()
+    {
+        $sessionToken = '2235e435f2015211bb1e633a677a690844a0cc55aec409fb1aa84f9210a96373271d2fda1e62cd96192bec475cd664103a6edadd508276880b9db3bd5c992199';
+
+        $req = new Request;
+        $accessChecker = new AccessChecker;
+        $this->assertNull($accessChecker->sessionToken($req));
+
+        $req->attributes->set('jwt.payload', (object) ['sid' => $sessionToken]);
+        $this->assertEquals($sessionToken, $accessChecker->sessionToken($req));
+    }
+
+    public function testIsRequestVerified()
+    {
+        $scope = [
+            'name'    => 'player',
+            'context' => [
+                'id' => 123,
+            ],
+        ];
+
+        {
+            $req = new Request;
+            $this->assertFalse(AccessChecker::isRequestVerified($req, $scope));
+        }
+
+        {
+            $req = new Request;
+            $req->headers->set('X-ACCESS', 'verified');
+            $this->assertFalse(AccessChecker::isRequestVerified($req, $scope));
+        }
+
+        {
+            $req = new Request;
+            $req->headers->set('X-ACCESS', 'unverified');
+            $this->assertFalse(AccessChecker::isRequestVerified($req, $scope));
+        }
+
+        {
+            $jwt = JWT::encode(['sid' => 'SID', 'exp' => strtotime('+ 15 minutes'), 'scope' => $scope], 'INTERNAL');
+            $req = new Request;
+            $req->attributes->set('jwt.payload', JWT::decode($jwt, 'INTERNAL', ['HS256']));
+            $req->headers->set('X-ACCESS', 'verified');
+            $this->assertTrue(AccessChecker::isRequestVerified($req, $scope));
+        }
     }
 }

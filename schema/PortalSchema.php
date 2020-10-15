@@ -25,6 +25,7 @@ class PortalSchema
             $instance->addIndex(['is_primary']);
             $instance->addIndex(['timestamp']);
             $instance->addIndex(['created']);
+            $instance->addUniqueIndex(['title'], 'uniq_portal_name');
         }
 
         if (!$schema->hasTable('gc_domain')) {
@@ -85,6 +86,7 @@ class PortalSchema
         $installPortalConf && self::installPortalConf($schema);
         self::update01($schema);
         self::update02($schema);
+        self::update03($schema);
     }
 
     public static function installPortalConf(Schema $schema)
@@ -136,6 +138,16 @@ class PortalSchema
             if (!$portalData->hasColumn('referrer')) {
                 $portalData->addColumn('referrer', 'string', ['notnull' => false]);
                 $portalData->addIndex(['referrer']);
+            }
+        }
+    }
+
+    public static function update03(Schema $schema)
+    {
+        if ($schema->hasTable('gc_instance')) {
+            $portalTable = $schema->getTable('gc_instance');
+            if (!$portalTable->hasIndex('uniq_portal_name')) {
+                $portalTable->addUniqueIndex(['title'], 'uniq_portal_name');
             }
         }
     }

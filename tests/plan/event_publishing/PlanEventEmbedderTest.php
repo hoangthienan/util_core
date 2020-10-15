@@ -53,8 +53,6 @@ class PlanEventEmbedderTest extends UtilCoreTestCase
         $embedded = $embedder->embedded($plan);
 
         $this->assertEquals('qa.mygo1.com', $embedded['portal']->title);
-        $this->assertEquals($this->profileId, $embedded['account']->profile_id);
-        $this->assertEquals($this->accountId, $embedded['account']->id);
         $this->assertEquals('course', $embedded['entity']->type);
         $this->assertEquals($this->courseId, $embedded['entity']->id);
         $this->assertEquals($this->portalId, $embedded['portal']->id);
@@ -68,8 +66,6 @@ class PlanEventEmbedderTest extends UtilCoreTestCase
         $embedded = $embedder->embedded($plan);
 
         $this->assertEquals('qa.mygo1.com', $embedded['portal']->title);
-        $this->assertEquals($this->profileId, $embedded['account']->profile_id);
-        $this->assertEquals($this->accountId, $embedded['account']->id);
         $this->assertEquals('course', $embedded['entity']->type);
         $this->assertEquals($this->courseId, $embedded['entity']->id);
         $this->assertEquals($this->portalId, $embedded['portal']->id);
@@ -83,8 +79,6 @@ class PlanEventEmbedderTest extends UtilCoreTestCase
         $embedded = $embedder->embedded($plan);
 
         $this->assertEquals('qa.mygo1.com', $embedded['portal']->title);
-        $this->assertEquals($this->profileId, $embedded['account']->profile_id);
-        $this->assertEquals($this->accountId, $embedded['account']->id);
         $this->assertEquals('course', $embedded['entity']->type);
         $this->assertEquals($this->courseId, $embedded['entity']->id);
         $this->assertEquals($this->portalId, $embedded['portal']->id);

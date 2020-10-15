@@ -3,24 +3,27 @@
 namespace go1\util\award\event_publishing;
 
 use Doctrine\DBAL\Connection;
+use go1\core\util\client\federation_api\v1\PortalAccountMapper;
+use go1\core\util\client\UserDomainHelper;
 use go1\util\AccessChecker;
 use go1\util\award\AwardHelper;
 use go1\util\portal\PortalHelper;
-use go1\util\user\UserHelper;
 use stdClass;
 use Symfony\Component\HttpFoundation\Request;
 
 class AwardEnrolmentCreateEventEmbedder
 {
-    protected $go1;
-    protected $award;
-    protected $access;
+    protected                   $go1;
+    protected                   $award;
+    protected                   $access;
+    protected UserDomainHelper  $userDomainHelper;
 
-    public function __construct(Connection $go1, Connection $award, AccessChecker $access)
+    public function __construct(Connection $go1, Connection $award, AccessChecker $access, UserDomainHelper $userDomainHelper)
     {
         $this->go1 = $go1;
         $this->award = $award;
         $this->access = $access;
+        $this->userDomainHelper = $userDomainHelper;
     }
 
     public function embedded(stdClass $awardEnrolment, Request $req = null): array
@@ -31,11 +34,9 @@ class AwardEnrolmentCreateEventEmbedder
 
         if ($portal = PortalHelper::load($this->go1, $awardEnrolment->instance_id)) {
             $embedded['portal'] = $portal;
-
-            $user = UserHelper::load($this->go1, $awardEnrolment->user_id, null, 'mail');
-            $account = $user ? UserHelper::loadByEmail($this->go1, $portal->title, $user->mail) : null;
-            if ($account) {
-                $embedded['account'] = $account;
+            $user = $this->userDomainHelper->loadUser((int) $awardEnrolment->user_id, $portal->title);
+            if ($user->account) {
+                $embedded['account'] = PortalAccountMapper::toLegacyStandardFormat($user, $user->account, $portal);
             }
         }
 

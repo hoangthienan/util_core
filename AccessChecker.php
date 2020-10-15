@@ -10,7 +10,6 @@ use go1\util\enrolment\EnrolmentHelper;
 use go1\util\lo\LoChecker;
 use go1\util\portal\PortalHelper;
 use go1\util\user\Roles;
-use go1\util\user\UserHelper;
 use PDO;
 use stdClass;
 use Symfony\Component\HttpFoundation\Request;
@@ -123,7 +122,26 @@ class AccessChecker
         return false;
     }
 
-    public function validUser(Request $req, $portalName = null, Connection $db = null)
+    public function jwt(Request $req): ?string
+    {
+        return $req->attributes->get('jwt.raw');
+    }
+
+    public function sessionToken(Request $req): ?string
+    {
+        $payload = $req->attributes->get('jwt.payload');
+
+        return $payload->sid ?? null;
+    }
+
+    public function usedCredentials(Request $req = null): bool
+    {
+        $payload = $req->attributes->get('jwt.payload');
+
+        return $payload->usedCreds ?? false;
+    }
+
+    public function validUser(Request $req, $portalName = null)
     {
         $payload = $req->attributes->get('jwt.payload');
         if ($payload && !empty($payload->object->type) && ('user' === $payload->object->type)) {
@@ -140,16 +158,6 @@ class AccessChecker
             foreach ($accounts as $account) {
                 if ($portalName == $account->instance) {
                     return $account;
-                }
-            }
-
-            if ($db) {
-                $account = UserHelper::loadByEmail($db, $portalName, $user->mail);
-                if (is_object($account)) {
-                    $hasLink = EdgeHelper::hasLink($db, EdgeTypes::HAS_ACCOUNT_VIRTUAL, $user->id, $account->id);
-                    if ($hasLink) {
-                        return $account;
-                    }
                 }
             }
         }
@@ -186,12 +194,15 @@ class AccessChecker
         return false;
     }
 
+    /**
+     * @deprecated Use UserDomainHelper::isManager($portalName, $managerPortalAccountLegacyId, $portalAccountLegacyId)
+     */
     public function isStudentManager(Connection $db, Request $req, string $studentMail, string $portalName)
     {
         if (!$user = $this->validUser($req)) {
             return false;
         }
-
+        
         return $db->fetchColumn(
             'SELECT 1 FROM gc_ro'
             . ' WHERE type = ?'
@@ -284,8 +295,7 @@ class AccessChecker
         int $assessorId,
         bool $checkParent = true,
         Request $req = null
-    ): bool
-    {
+    ): bool {
         if ($req && $this->isAccountsAdmin($req)) {
             return true;
         }
@@ -312,6 +322,22 @@ class AccessChecker
                 }
                 $currentChildAwardIds = $awardParentIds;
             }
+        }
+
+        return false;
+    }
+
+    public static function isRequestVerified(Request $req, ?array $scope): bool
+    {
+        # `X-ACCESS` is forwarded from up stream API services, we allow to access the endpoint as 1Player previewToken,
+        if (!$req->headers->has('X-ACCESS') || $req->headers->get('X-ACCESS') !== 'verified') {
+            return false;
+        }
+
+        $payload = $req->attributes->get('jwt.payload');
+        $currentScope = $payload->scope ?? null;
+        if ($currentScope == json_decode(json_encode($scope, JSON_FORCE_OBJECT))) {
+            return true;
         }
 
         return false;

@@ -43,7 +43,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
      */
     protected $enrolmentEventsEmbedder;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
         $this->enrolmentEventsEmbedder = new EnrolmentEventsEmbedder($this->go1, new AccessChecker);
@@ -262,6 +262,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $enrolment = Enrolment::create();
         $enrolment->id = 1;
         $enrolment->profileId = 1;
+        $enrolment->userId = 3;
         $enrolment->parentLoId = 2;
         $enrolment->parentEnrolmentId = 3;
         $enrolment->takenPortalId = 4;
@@ -278,6 +279,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $e = EnrolmentHelper::loadSingle($this->go1, 1);
         $this->assertEquals($status, $enrolment->status);
         $this->assertEquals($e->profileId, $enrolment->profileId);
+        $this->assertEquals($e->userId, $enrolment->userId);
         $this->assertEquals($e->loId, $lo->id);
         $this->assertEquals($e->parentLoId, $enrolment->parentLoId);
         $this->assertEquals($e->parentEnrolmentId, $enrolment->parentEnrolmentId);
@@ -297,8 +299,8 @@ class EnrolmentHelperTest extends UtilCoreTestCase
 
     public function testCreateWithMarketplaceLO()
     {
-        $instanceId = $this->createPortal($this->go1, []);
-        $courseId = $this->createCourse($this->go1, ['instance_id' => $instanceId, 'marketplace' => 1]);
+        $instanceId = $this->createPortal($this->go1, ['title' => 'content-provider.mygo1.com']);
+        $courseId = $this->createCourse($this->go1, ['title' => 'marketplace.mygo1.com', 'instance_id' => $instanceId, 'marketplace' => 1]);
         $lo = LoHelper::load($this->go1, $courseId);
 
         $enrolment = Enrolment::create();
@@ -330,13 +332,12 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $this->assertEquals($e->changed, $enrolment->changed);
         $this->assertEquals('bar', $e->data->foo);
 
-        $this->assertCount(1, $this->queueMessages[Queue::DO_USER_CREATE_VIRTUAL_ACCOUNT]);
         $this->assertCount(1, $this->queueMessages[Queue::ENROLMENT_CREATE]);
     }
 
     public function testLoadRevision()
     {
-        $instanceId = $this->createPortal($this->go1, []);
+        $instanceId = $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']);
         $courseId = $this->createCourse($this->go1, ['instance_id' => $instanceId]);
         $status = EnrolmentStatuses::NOT_STARTED;
         $date = DateTime::formatDate('now');
@@ -400,11 +401,13 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $this->link($this->go1, EdgeTypes::HAS_TUTOR_ENROLMENT_EDGE, $assessor1Id, $enrolmentId);
         $this->link($this->go1, EdgeTypes::HAS_TUTOR_ENROLMENT_EDGE, $assessor2Id, $enrolmentId);
 
-        $assessors = EnrolmentHelper::assessors($this->go1, $enrolmentId);
+        $c = $this->getContainer(false);
+        $helper = $c['go1.client.user-domain-helper'];
+        $assessors = EnrolmentHelper::assessors($this->go1, $helper, $enrolmentId);
 
         $this->assertEquals(2, count($assessors));
-        $this->assertEquals($assessor1Id, $assessors[0]->id);
-        $this->assertEquals($assessor2Id, $assessors[1]->id);
+        $this->assertEquals($assessor1Id, $assessors[0]['id']);
+        $this->assertEquals($assessor2Id, $assessors[1]['id']);
     }
 
     public function testDueDate()
@@ -433,28 +436,28 @@ class EnrolmentHelperTest extends UtilCoreTestCase
     public function testDueDateAndPlanType()
     {
         $enrolmentId = $this->createEnrolment($this->go1, ['lo_id' => 1, 'profile_id' => 1]);
-        list($dueDate, $planType) = EnrolmentHelper::getDueDateAndPlanType($this->go1, $enrolmentId);
+        [$dueDate, $planType] = EnrolmentHelper::getDueDateAndPlanType($this->go1, $enrolmentId);
         $this->assertNull($dueDate);
         $this->assertNull($planType);
 
         # Plan does not have due date
         $planId = $this->createPlan($this->go1, []);
         $this->link($this->go1, EdgeTypes::HAS_PLAN, $enrolmentId, $planId);
-        list($dueDate, $planType) = EnrolmentHelper::getDueDateAndPlanType($this->go1, $enrolmentId);
+        [$dueDate, $planType] = EnrolmentHelper::getDueDateAndPlanType($this->go1, $enrolmentId);
         $this->assertNull($dueDate);
         $this->assertNull($planType);
 
         # Plan does have due date
         $planId = $this->createPlan($this->go1, ['due_date' => '4 days']);
         $this->link($this->go1, EdgeTypes::HAS_PLAN, $enrolmentId, $planId);
-        list($dueDate, $_) = EnrolmentHelper::getDueDateAndPlanType($this->go1, $enrolmentId);
+        [$dueDate, $_] = EnrolmentHelper::getDueDateAndPlanType($this->go1, $enrolmentId);
         $this->assertTrue($dueDate->getTimestamp() > 0);
 
         # Enrolment has multiple plans
         $planId2 = $this->createPlan($this->go1, ['due_date' => '5 days', 'type' => PlanTypes::SUGGESTED]);
         $plan = PlanHelper::load($this->go1, $planId);
         $this->link($this->go1, EdgeTypes::HAS_PLAN, $enrolmentId, $planId2);
-        list($dueDate, $planType) = EnrolmentHelper::getDueDateAndPlanType($this->go1, $enrolmentId);
+        [$dueDate, $planType] = EnrolmentHelper::getDueDateAndPlanType($this->go1, $enrolmentId);
         $this->assertTrue($dueDate->getTimestamp() > 0);
         $this->assertEquals($dueDate, DateTime::create($plan->due_date));
         $this->assertEquals($planType, PlanTypes::ASSIGN);
@@ -473,6 +476,22 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $this->assertEquals($enrolmentId, $enrolment->id);
         $this->assertEquals($takenPortalId, $enrolment->takenPortalId);
         $this->assertNull(EnrolmentHelper::loadUserEnrolment($this->go1, 0, $profileId, $loId, $parentEnrolmentId));
+    }
+
+    public function testFindEnrolment()
+    {
+        $enrolmentId = $this->createEnrolment($this->go1, [
+            'lo_id'               => $loId = 2,
+            'profile_id'          => $profileId = 3,
+            'user_id'             => $userId = 4,
+            'parent_enrolment_id' => $parentEnrolmentId = 5,
+            'taken_instance_id'   => $takenPortalId = 5,
+        ]);
+
+        $enrolment = EnrolmentHelper::findEnrolment($this->go1, $takenPortalId, $userId, $loId, $parentEnrolmentId);
+        $this->assertEquals($enrolmentId, $enrolment->id);
+        $this->assertEquals($takenPortalId, $enrolment->takenPortalId);
+        $this->assertNull(EnrolmentHelper::findEnrolment($this->go1, 0, $userId, $loId, $parentEnrolmentId));
     }
 
     public function testLoadSingleEnrolment()

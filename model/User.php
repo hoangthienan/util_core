@@ -10,6 +10,8 @@ use PDO;
 use stdClass;
 
 /**
+ * @deprecated This class should not be used in flavor #user-domain models.
+ *
  * Just for reference, not ready for using yet.
  */
 class User implements JsonSerializable

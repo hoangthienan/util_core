@@ -2,9 +2,11 @@
 
 namespace go1\util\schema\tests;
 
+use go1\util\tests\MockPDO;
 use go1\util\DB;
 use go1\util\tests\UtilCoreTestCase;
 use go1\util\user\UserHelper;
+use PDO;
 
 class DBTest extends UtilCoreTestCase
 {
@@ -179,5 +181,25 @@ class DBTest extends UtilCoreTestCase
         $bar = DB::connectionOptions('s_foo');
         $this->assertEquals('slave.bar.com', $bar['host']);
         $this->assertEquals('s_foo_prod', $bar['dbname']);
+    }
+
+    public function testPoolConnection()
+    {
+        $_ENV = [];
+        putenv('FOO_DB_NAME=foo_db');
+        putenv('FOO_DB_USERNAME=foo_username');
+        putenv('FOO_DB_PASSWORD=foo_password');
+        putenv('FOO_DB_SLAVE=slave.foo.com');
+        putenv('FOO_DB_HOST=foo.com');
+
+        $o = DB::connectionPoolOptions('foo', false, true, MockPDO::class);
+        $this->assertEquals('mysql:host=foo.com;dbname=foo_db;port=3306', $o['pdo']->dsn);
+        $this->assertEquals('foo_username', $o['pdo']->username);
+        $this->assertEquals('foo_password', $o['pdo']->password);
+        $this->assertEquals([
+            1002 => 'SET NAMES utf8',
+            PDO::ATTR_PERSISTENT   => true,
+        ], $o['pdo']->options);
+
     }
 }

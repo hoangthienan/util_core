@@ -10,6 +10,9 @@ class LoSchema
     public static function install(Schema $schema)
     {
         if (!$schema->hasTable('gc_lo')) {
+            # @deprecated
+            # data.single_li
+
             $lo = $schema->createTable('gc_lo');
             $lo->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
             $lo->addColumn('type', 'string');
@@ -32,8 +35,11 @@ class LoSchema
             $lo->addColumn('data', 'blob');
             $lo->addColumn('created', 'integer');
             $lo->addColumn('updated', 'integer', ['notnull' => false]);
+            $lo->addColumn('decommissioned_at', 'integer', ['notnull' => false]);
+            $lo->addColumn('removed_at', 'integer', ['notnull' => false]);
             $lo->addColumn('sharing', 'smallint');
             $lo->addColumn('premium', 'integer', ['unsigned' => true, 'notnull' => true, 'default' => 0]);
+            $lo->addColumn('single_li', Type::BOOLEAN, ['notnull' => true, 'default' => 0]);
             $lo->addColumn('summary', 'text', ['notnull' => false ]);
 
             $lo->setPrimaryKey(['id']);
@@ -48,11 +54,27 @@ class LoSchema
             $lo->addIndex(['timestamp']);
             $lo->addIndex(['created']);
             $lo->addIndex(['updated']);
+            $lo->addIndex(['decommissioned_at']);
+            $lo->addIndex(['removed_at']);
             $lo->addIndex(['sharing']);
             $lo->addIndex(['enrolment_count']);
             $lo->addIndex(['tags']);
             $lo->addIndex(['locale']);
+            $lo->addIndex(['remote_id']);
+            $lo->addIndex(['single_li']);
             $lo->addUniqueIndex(['instance_id', 'type', 'remote_id']);
+        } else {
+            $lo = $schema->getTable('gc_lo');
+
+            if (!$lo->hasColumn('decommissioned_at')) {
+                $lo->addColumn('decommissioned_at', Type::INTEGER, ['notnull' => false]);
+                $lo->addIndex(['decommissioned_at']);
+            }
+
+            if (!$lo->hasColumn('removed_at')) {
+                $lo->addColumn('removed_at', Type::INTEGER, ['notnull' => false]);
+                $lo->addIndex(['removed_at']);
+            }
         }
 
         if (!$schema->hasTable('gc_lo_pricing')) {
@@ -249,15 +271,15 @@ class LoSchema
             $attr->addColumn('default_value', 'string', ['notnull' => false]);
             $attr->addColumn('is_array', 'smallint', [
                 'unsigned' => true,
-                'notnull' => false,
-                'default' => 0,
+                'notnull'  => false,
+                'default'  => 0,
             ]);
             $attr->addColumn('dimension_id', 'integer', [
                 'unsigned' => true,
                 'notnull'  => false,
             ]);
-            $attr->addColumn('validation_regex', 'string', ['notnull'  => false ]);
-            $attr->addColumn('sort_order', 'integer', ['notnull'  => false ]);
+            $attr->addColumn('validation_regex', 'string', ['notnull' => false]);
+            $attr->addColumn('sort_order', 'integer', ['notnull' => false]);
             $attr->setPrimaryKey(['id']);
         }
 
@@ -265,15 +287,29 @@ class LoSchema
         if ($schema->hasTable('gc_lo')) {
             $lo = $schema->getTable('gc_lo');
 
-            $indexed = false;
+            $indexedOriginId = false;
+            $indexedRemoteId = false;
             foreach ($lo->getIndexes() as $index) {
                 if (['origin_id'] == $index->getColumns()) {
-                    $indexed = true;
+                    $indexedOriginId = true;
+                }
+
+                if (['remote_id'] == $index->getColumns()) {
+                    $indexedRemoteId = true;
                 }
             }
-            
-            if (!$indexed) {
+
+            if (!$indexedOriginId) {
                 $lo->addIndex(['origin_id']);
+            }
+
+            if (!$indexedRemoteId) {
+                $lo->addIndex(['remote_id']);
+            }
+
+            if (!$lo->hasColumn('single_li')) {
+                $lo->addColumn('single_li', Type::BOOLEAN, ['notnull' => true, 'default' => 0]);
+                $lo->addIndex(['single_li']);
             }
         }
     }

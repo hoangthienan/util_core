@@ -55,6 +55,8 @@ trait LoMockTrait
         }
 
         $options['data'] = isset($options['data']) ? (is_scalar($options['data']) ? json_decode($options['data'], true) : $options['data']) : [];
+        $singleLi = $options['single_li'] ?? $options['data']['single_li'] ?? false;
+
         if (!isset($options['data'][LoHelper::ENROLMENT_RE_ENROL])) {
             $options['data'][LoHelper::ENROLMENT_RE_ENROL] = LoHelper::ENROLMENT_RE_ENROL_DEFAULT;
         }
@@ -65,30 +67,33 @@ trait LoMockTrait
         }
 
         $opt = [
-            'id'              => $options['id'] ?? null,
-            'type'            => isset($options['type']) ? $options['type'] : LoTypes::COURSE,
-            'instance_id'     => $instanceId = isset($options['instance_id']) ? $options['instance_id'] : 0,
-            'remote_id'       => isset($options['remote_id']) ? $options['remote_id'] : ($db->fetchColumn('SELECT 1 + MAX(remote_id) FROM gc_lo') ?: 1),
-            'title'           => isset($options['title']) ? $options['title'] : 'Example course',
-            'description'     => isset($options['description']) ? $options['description'] : '…',
-            'private'         => isset($options['private']) ? $options['private'] : 0,
-            'published'       => isset($options['published']) ? $options['published'] : 1,
-            'language'        => isset($options['language']) ? $options['language'] : 'en',
-            'tags'            => isset($options['tags']) ? $options['tags'] : '',
-            'locale'          => isset($locale) ? $locale : null,
-            'event'           => isset($options['event']) ? (is_scalar($options['event']) ? $options['event'] : json_encode($options['event'])) : '',
-            'event_start'     => isset($start) ? $start : 0,
-            'marketplace'     => isset($options['marketplace']) ? $options['marketplace'] : 0,
-            'origin_id'       => isset($options['origin_id']) ? $options['origin_id'] : 0,
-            'image'           => isset($options['image']) ? $options['image'] : '',
-            'enrolment_count' => isset($options['enrolment_count']) ? $options['enrolment_count'] : 0,
-            'data'            => isset($options['data']) ? $options['data'] : '',
-            'timestamp'       => isset($options['timestamp']) ? $options['timestamp'] : time(),
-            'created'         => isset($options['created']) ? $options['created'] : time(),
-            'updated'         => isset($options['updated']) ? $options['updated'] : time(),
-            'sharing'         => isset($options['sharing']) ? $options['sharing'] : 0,
-            'premium'         => isset($options['premium']) ? $options['premium'] : 0,
-            'summary'         => isset($options['summary']) ? $options['summary'] : null,
+            'id'                => $options['id'] ?? null,
+            'type'              => isset($options['type']) ? $options['type'] : LoTypes::COURSE,
+            'instance_id'       => $instanceId = isset($options['instance_id']) ? $options['instance_id'] : 0,
+            'remote_id'         => isset($options['remote_id']) ? $options['remote_id'] : ($db->fetchColumn('SELECT 1 + MAX(remote_id) FROM gc_lo') ?: 1),
+            'title'             => isset($options['title']) ? $options['title'] : 'Example course',
+            'description'       => isset($options['description']) ? $options['description'] : '…',
+            'private'           => isset($options['private']) ? $options['private'] : 0,
+            'published'         => isset($options['published']) ? $options['published'] : 1,
+            'language'          => isset($options['language']) ? $options['language'] : 'en',
+            'tags'              => isset($options['tags']) ? $options['tags'] : '',
+            'locale'            => isset($locale) ? $locale : null,
+            'event'             => isset($options['event']) ? (is_scalar($options['event']) ? $options['event'] : json_encode($options['event'])) : '',
+            'event_start'       => isset($start) ? $start : 0,
+            'marketplace'       => isset($options['marketplace']) ? $options['marketplace'] : 0,
+            'origin_id'         => isset($options['origin_id']) ? $options['origin_id'] : 0,
+            'image'             => isset($options['image']) ? $options['image'] : '',
+            'enrolment_count'   => isset($options['enrolment_count']) ? $options['enrolment_count'] : 0,
+            'data'              => isset($options['data']) ? $options['data'] : '',
+            'timestamp'         => isset($options['timestamp']) ? $options['timestamp'] : time(),
+            'created'           => isset($options['created']) ? $options['created'] : time(),
+            'updated'           => isset($options['updated']) ? $options['updated'] : time(),
+            'sharing'           => isset($options['sharing']) ? $options['sharing'] : 0,
+            'premium'           => isset($options['premium']) ? $options['premium'] : 0,
+            'summary'           => isset($options['summary']) ? $options['summary'] : null,
+            'single_li'         => boolval($singleLi),
+            'decommissioned_at' => $options['decommissioned_at'] ?? null,
+            'removed_at'        => $options['removed_at'] ?? null,
         ];
         $db->insert('gc_lo', $opt);
 

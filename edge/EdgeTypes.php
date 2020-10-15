@@ -91,7 +91,7 @@ class EdgeTypes
     const HAS_TUTOR                   = 15; # T: Simple Account       | S: Learning object
     const HAS_AUTHOR                  = 17; # T: Simple Account       | S: Learning object
     const HAS_TUTOR_ENROLMENT         = 18; # T: Simple account       | S: Enrolment
-    const HAS_ENQUIRY                 = 19; # T: Learning object      | S: Profile
+    const HAS_ENQUIRY                 = 19; # T: User                 | S: Learning Object
     const HAS_ARCHIVED_ENQUIRY        = 20; # T: NULL                 | S: Deleted gc_ro type HAS_ENQUIRY's id - just for handling duplicated archived enquiries
     const HAS_EXCLUDED_TAG            = 31; # T: Tag                  | S: Learning object
     const COURSE_ASSESSOR             = 32; # T: gc_user.id           | S: Learning object
@@ -108,6 +108,7 @@ class EdgeTypes
     const HAS_SUGGESTED_COMPLETION    = 44; # T: 0                    | S: gc_ro.id              | data: { KEY: VALUE }
     const AWARD_ASSESSOR              = 45; # T: Account              | S: award.id
     const GROUP_HAS_ITEM              = 46; # T: Learning object      | S: Learning object (group lo only)
+    const PLAYLIST_HAS_ITEM           = 47; # T: LO                   | S: playlist.
 
     # LO & enrolment scheduling
     # ---------------------
@@ -136,15 +137,21 @@ class EdgeTypes
 
     # User relationships
     # ---------------------
+    // @deprecated Use UserDomainHelper
     const HAS_ROLE                       = 500; # T: Role               | S: User
+    // @deprecated Use UserDomainHelper
     const HAS_ACCOUNT                    = 501; # T: Account            | S: User
+    // @deprecated Use UserDomainHelper
     const HAS_TUTOR_EDGE                 = 502; # T: User (Tutor)       | S: gc_ro id - the record has source_id is course, target_id is (Module)
     const HAS_AUTHOR_EDGE                = 503; # T: User               | S: Learning object
+    // @deprecated Use UserDomainHelper
     const HAS_MANAGER                    = 504; # T: User Id of manager | S: gc_user.id Account Id of student
-    const HAS_EMAIL                      = 505; # T: gc_user_mail id    | S: gc_user id
+    // @deprecated Use UserDomainHelper
+    const HAS_EMAIL                      = 505; # T: gc_user_mail id    | S: gc_user id @Deprecated by query in gc_user_email instead
     const HAS_TUTOR_ENROLMENT_EDGE       = 506; # T: gc_enrolment id    | S: gc_user id
     const HAS_FOLLOWING                  = 508; # T: gc_user.id         | S: gc_user.id
     const HAS_PORTAL_EDGE                = 509; # T: gc_instance.id     | S: gc_user.id | Portal - Owner Relationship
+    // @deprecated by no longer use virtual account
     const HAS_ACCOUNT_VIRTUAL            = 510; # T: User               | S: Account
     const HAS_MENTION                    = 602; # T: gc_lo.id           | S: gc_user.id
     const HAS_SHARE_GROUP_NOTE           = 604; # T: gc_social_group.id | S: gc_note.id

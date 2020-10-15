@@ -11,14 +11,15 @@ use go1\util\plan\event_publishing\PlanCreateEventEmbedder;
 use go1\util\plan\event_publishing\PlanDeleteEventEmbedder;
 use go1\util\plan\event_publishing\PlanUpdateEventEmbedder;
 use go1\util\queue\Queue;
+use Ramsey\Uuid\Uuid;
 
 class PlanRepository
 {
-    private $db;
-    private $queue;
-    private $planCreateEventEmbedder;
-    private $planUpdateEventEmbedder;
-    private $planDeleteEventEmbedder;
+    private Connection              $db;
+    private MqClient                $queue;
+    private PlanCreateEventEmbedder $planCreateEventEmbedder;
+    private PlanUpdateEventEmbedder $planUpdateEventEmbedder;
+    private PlanDeleteEventEmbedder $planDeleteEventEmbedder;
 
     public function __construct(
         Connection $db,
@@ -162,7 +163,7 @@ class PlanRepository
         return $revisions;
     }
 
-    public function create(Plan &$plan, bool $notify = false, array $queueContext = [])
+    public function create(Plan &$plan, bool $notify = false, array $queueContext = [], array $embedded = [])
     {
         $this->db->insert('gc_plan', [
             'type'         => $plan->type,
@@ -180,9 +181,11 @@ class PlanRepository
         $plan->id = $this->db->lastInsertId('gc_plan');
         $plan->notify = $notify ?: ($queueContext['notify'] ?? false);
         $queueContext['notify'] = $plan->notify;
+        $queueContext['sessionId'] = Uuid::uuid4()->toString();
 
         $payload = $plan->jsonSerialize();
-        $payload['embedded'] = $this->planCreateEventEmbedder->embedded($plan);
+        $payload['embedded'] = $embedded + $this->planCreateEventEmbedder->embedded($plan);
+
         $this->queue->publish($payload, Queue::PLAN_CREATE, $queueContext);
 
         return $plan->id;
@@ -205,13 +208,13 @@ class PlanRepository
         ]);
     }
 
-    public function update(Plan $original, Plan $plan, bool $notify = false)
+    public function update(Plan $original, Plan $plan, bool $notify = false, array $embedded = [])
     {
         if (!$diff = $original->diff($plan)) {
             return null;
         }
 
-        $this->db->transactional(function () use ($original, $plan, $notify, $diff) {
+        $this->db->transactional(function () use ($original, $plan, $notify, $diff, $embedded) {
             $this->createRevision($original);
             $this->db->update('gc_plan', $diff, ['id' => $original->id]);
             $plan->id = $original->id;
@@ -219,12 +222,12 @@ class PlanRepository
             $plan->notify = $notify;
 
             $payload = $plan->jsonSerialize();
-            $payload['embedded'] = $this->planDeleteEventEmbedder->embedded($plan);
+            $payload['embedded'] = $embedded + $this->planDeleteEventEmbedder->embedded($plan);
             $this->queue->publish($payload, Queue::PLAN_UPDATE);
         });
     }
 
-    public function delete(int $id)
+    public function delete(int $id, array $embedded = [])
     {
         if (!$plan = $this->load($id)) {
             return null;
@@ -233,11 +236,11 @@ class PlanRepository
         $this->db->delete('gc_plan', ['id' => $id]);
 
         $payload = $plan->jsonSerialize();
-        $payload['embedded'] = $this->planDeleteEventEmbedder->embedded($plan);
+        $payload['embedded'] = $embedded + $this->planDeleteEventEmbedder->embedded($plan);
         $this->queue->publish($payload, Queue::PLAN_DELETE);
     }
 
-    public function merge(Plan $plan, bool $notify = false, array $queueContext = [])
+    public function merge(Plan $plan, bool $notify = false, array $queueContext = [], array $embedded = [])
     {
         $qb = $this->db->createQueryBuilder();
         $original = $qb
@@ -263,27 +266,27 @@ class PlanRepository
             if (false === $plan->due) {
                 $plan->due = $original->due;
             }
-            $this->update($original, $plan, $notify);
+            $this->update($original, $plan, $notify, $embedded);
             $planId = $original->id;
         } else {
-            $planId = $this->create($plan, $notify, $queueContext);
+            $planId = $this->create($plan, $notify, $queueContext, $embedded);
         }
 
         return $planId;
     }
 
-    public function archive(int $planId)
+    public function archive(int $planId, array $embedded = [])
     {
         if (!$plan = $this->load($planId)) {
             return false;
         }
 
-        $this->db->transactional(function () use ($plan) {
+        $this->db->transactional(function () use ($plan, $embedded) {
             $this->db->delete('gc_plan', ['id' => $plan->id]);
             $this->createRevision($plan);
 
             $payload = $plan->jsonSerialize();
-            $payload['embedded'] = $this->planDeleteEventEmbedder->embedded($plan);
+            $payload['embedded'] = $embedded + $this->planDeleteEventEmbedder->embedded($plan);
             $this->queue->publish($payload, Queue::PLAN_DELETE);
         });
 

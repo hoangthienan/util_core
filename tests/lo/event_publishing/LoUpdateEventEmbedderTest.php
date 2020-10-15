@@ -16,7 +16,7 @@ class LoUpdateEventEmbedderTest extends LoCreateEventEmbedderTest
     {
         $c = $this->getContainer();
         $event = LoHelper::load($this->go1, $this->eventLiId);
-        $embedder = new LoUpdateEventEmbedder($this->go1, $c['access_checker']);
+        $embedder = new LoUpdateEventEmbedder($this->go1, $c['access_checker'], $c['go1.client.user-domain-helper']);
         $req = Request::create('/', 'POST');
         $req->attributes->set('jwt.payload', Text::jwtContent($this->jwt));
         $embedded = $embedder->embedded($event, $req);
@@ -24,5 +24,12 @@ class LoUpdateEventEmbedderTest extends LoCreateEventEmbedderTest
         $this->assertEquals('qa.mygo1.com', $embedded['portal']->title);
         $this->assertEquals(LoTypes::MODULE, $embedded['parents'][1]->type);
         $this->assertEquals(LoTypes::COURSE, $embedded['parents'][0]->type);
+
+        $this->assertEquals(1, sizeof($embedded['authors']));
+        $author = $embedded['authors'][0];
+        $this->assertEquals(1, $author['id']);
+        $this->assertEquals('john.doe@qa.local', $author['mail']);
+        $this->assertEquals('A', $author['first_name']);
+        $this->assertEquals('T', $author['last_name']);
     }
 }

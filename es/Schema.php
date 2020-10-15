@@ -20,9 +20,11 @@ class Schema
     const PORTALS_INDEX     = ES_INDEX . '_portal*';
     const PAYMENT_INDEX     = ES_INDEX . '_payment';
     const EVENT_INDEX       = ES_INDEX . '_event';
+    const AWARD_INDEX       = ES_INDEX . '_award';
 
     # GO1-core indices
     const LEARNING_RECORD_INDEX = ES_INDEX.'_learning_record';
+    const LEARNING_OBJECT_INDEX = ES_INDEX.'_learning_object';
 
     # Indices for explore
     const EXPLORE_INDEX             = ES_INDEX . '_explore';
@@ -831,7 +833,7 @@ class Schema
         'properties' => [
             'id'          => ['type' => self::T_KEYWORD],
             'revision_id' => ['type' => self::T_INT],
-            'title'       => ['type' => self::T_KEYWORD],
+            'title'       => ['type' => self::T_KEYWORD] + self::ANALYZED,
             'description' => ['type' => self::T_TEXT],
             'image'       => ['type' => self::T_TEXT],
             'user_id'     => ['type' => self::T_INT],

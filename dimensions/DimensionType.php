@@ -13,6 +13,8 @@ class DimensionType
     const LEARNER_LEVEL          = 7;
     const LOCALE                 = 8;
     const REGION_RELEVANCE       = 9;
+    const ROLE_SKILL             = 10;
+    const PLAYBACK_TARGET        = 11;
 
     public static function all()
     {

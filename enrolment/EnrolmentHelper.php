@@ -5,6 +5,9 @@ namespace go1\util\enrolment;
 use DateTime as DefaultDateTime;
 use Doctrine\DBAL\Connection;
 use go1\clients\MqClient;
+use go1\core\util\client\federation_api\v1\schema\object\User;
+use go1\core\util\client\federation_api\v1\UserMapper;
+use go1\core\util\client\UserDomainHelper;
 use go1\util\DateTime;
 use go1\util\DB;
 use go1\util\edge\EdgeHelper;
@@ -15,14 +18,12 @@ use go1\util\lo\LoTypes;
 use go1\util\model\Enrolment;
 use go1\util\plan\PlanHelper;
 use go1\util\plan\PlanTypes;
-use go1\util\portal\PortalChecker;
-use go1\util\portal\PortalHelper;
 use go1\util\queue\Queue;
-use go1\util\user\UserHelper;
 use LengthException;
 use PDO;
 use ReflectionClass;
 use stdClass;
+use function array_map;
 
 /**
  * @TODO We're going to load & attach edges into enrolment.
@@ -84,10 +85,10 @@ class EnrolmentHelper
             ->createQueryBuilder()
             ->select($select)
             ->from('gc_enrolment')
-            ->where('lo_id = :lo_id')->setParameter(':lo_id', (int)$loId, DB::INTEGER)
-            ->andWhere('profile_id = :profile_id')->setParameter(':profile_id', (int)$profileId, DB::INTEGER);
+            ->where('lo_id = :lo_id')->setParameter(':lo_id', (int) $loId, DB::INTEGER)
+            ->andWhere('profile_id = :profile_id')->setParameter(':profile_id', (int) $profileId, DB::INTEGER);
 
-        $parentLoId && $q->andWhere('parent_lo_id = :parent_lo_id')->setParameter(':parent_lo_id', (int)$parentLoId, DB::INTEGER);
+        $parentLoId && $q->andWhere('parent_lo_id = :parent_lo_id')->setParameter(':parent_lo_id', (int) $parentLoId, DB::INTEGER);
         $enrolments = $q->execute()->fetchAll($fetchMode);
         if (count($enrolments) > 1) {
             throw new LengthException('More than one enrolment return.');
@@ -102,11 +103,11 @@ class EnrolmentHelper
             ->createQueryBuilder()
             ->select($select)
             ->from('gc_enrolment')
-            ->where('lo_id = :lo_id')->setParameter(':lo_id', (int)$loId)
-            ->andWhere('profile_id = :profile_id')->setParameter(':profile_id', (int)$profileId, DB::INTEGER)
-            ->andWhere('taken_instance_id = :taken_instance_id')->setParameter(':taken_instance_id', (int)$portalId, DB::INTEGER);
+            ->where('lo_id = :lo_id')->setParameter(':lo_id', (int) $loId)
+            ->andWhere('profile_id = :profile_id')->setParameter(':profile_id', (int) $profileId, DB::INTEGER)
+            ->andWhere('taken_instance_id = :taken_instance_id')->setParameter(':taken_instance_id', (int) $portalId, DB::INTEGER);
 
-        $parentLoId && $q->andWhere('parent_lo_id = :parent_lo_id')->setParameter(':parent_lo_id', (int)$parentLoId, DB::INTEGER);
+        $parentLoId && $q->andWhere('parent_lo_id = :parent_lo_id')->setParameter(':parent_lo_id', (int) $parentLoId, DB::INTEGER);
 
         return $q->execute()->fetch($fetchMode);
     }
@@ -166,11 +167,18 @@ class EnrolmentHelper
             ->get($db, [], [$enrolmentId], [EdgeTypes::HAS_TUTOR_ENROLMENT_EDGE], PDO::FETCH_COLUMN);
     }
 
-    public static function assessors(Connection $db, int $enrolmentId): array
+    public static function assessors(Connection $db, UserDomainHelper $userDomainHelper, int $enrolmentId): array
     {
         $assessorIds = self::assessorIds($db, $enrolmentId);
+        $assessorIds = array_map('intval', $assessorIds);
+        $assessors = !$assessorIds ? [] : array_map(
+            function (User $user) {
+                return UserMapper::toLegacyStandardFormat('', $user);
+            },
+            $userDomainHelper->loadMultipleUsers($assessorIds)
+        );
 
-        return !$assessorIds ? [] : UserHelper::loadMultiple($db, array_map('intval', $assessorIds));
+        return $assessors;
     }
 
     /**
@@ -196,9 +204,9 @@ class EnrolmentHelper
             ];
         };
         $lo = $loadLo($enrolment->lo_id);
-        list($parentLo, $parentEnrolment) = $parentQuery($lo, $enrolment);
+        [$parentLo, $parentEnrolment] = $parentQuery($lo, $enrolment);
         while ($parentLo && $parentEnrolment && ($parentLo->type != $parentLoType)) {
-            list($parentLo, $parentEnrolment) = $parentQuery($parentLo, $parentEnrolment);
+            [$parentLo, $parentEnrolment] = $parentQuery($parentLo, $parentEnrolment);
         }
 
         return $parentLo && ($parentLo->type == $parentLoType) ? $parentEnrolment : false;
@@ -270,8 +278,7 @@ class EnrolmentHelper
         EnrolmentEventsEmbedder $enrolmentEventsEmbedder,
         $assignerId = null,
         $notify = true
-    )
-    {
+    ) {
         $date = DateTime::formatDate('now');
         if (!$enrolment->startDate && ($enrolment->status != EnrolmentStatuses::NOT_STARTED)) {
             $enrolment->startDate = $date;
@@ -280,6 +287,7 @@ class EnrolmentHelper
         $data = [
             'id'                  => $enrolment->id,
             'profile_id'          => $enrolment->profileId,
+            'user_id'             => $enrolment->userId,
             'parent_lo_id'        => $enrolment->parentLoId,
             'parent_enrolment_id' => $enrolment->parentEnrolmentId,
             'lo_id'               => $lo->id,
@@ -297,14 +305,6 @@ class EnrolmentHelper
 
         $db->insert('gc_enrolment', $data);
 
-        if ($lo->marketplace) {
-            if ($portal = PortalHelper::load($db, $lo->instance_id)) {
-                if ((new PortalChecker)->isVirtual($portal)) {
-                    $queue->publish(['type' => 'enrolment', 'object' => $data], Queue::DO_USER_CREATE_VIRTUAL_ACCOUNT);
-                }
-            }
-        }
-
         $rMqClient = new ReflectionClass(MqClient::class);
         $actorIdKey = $rMqClient->hasConstant('CONTEXT_ACTOR_ID') ? $rMqClient->getConstant('CONTEXT_ACTOR_ID') : 'actor_id';
 
@@ -315,9 +315,9 @@ class EnrolmentHelper
     public static function hasEnrolment(Connection $db, int $loId, int $profileId, int $parentLoId = null, int $takenPortalId = null)
     {
         return (boolean) (
-            $takenPortalId
-                ? static::loadByLoProfileAndPortal($db, $loId, $profileId, $takenPortalId, $parentLoId, '1', DB::COL)
-                : static::loadByLoAndProfileId($db, $loId, $profileId, $parentLoId, '1', DB::COL)
+        $takenPortalId
+            ? static::loadByLoProfileAndPortal($db, $loId, $profileId, $takenPortalId, $parentLoId, '1', DB::COL)
+            : static::loadByLoAndProfileId($db, $loId, $profileId, $parentLoId, '1', DB::COL)
         );
     }
 
@@ -364,6 +364,7 @@ class EnrolmentHelper
      * If there is a completion rule and the due date is not set elsewhere by admin, users have that due date attached.
      * If there is a completion rule but the admin sets a due date via a group, it should be overwritten for users in that group.
      * On top of the above, if a user is separately assigned by admin, that will overwrite the group due date / completion rule date).
+     *
      * @param \Doctrine\DBAL\Connection $db
      * @param int                       $enrolmentId
      * @return array
@@ -393,6 +394,16 @@ class EnrolmentHelper
         return [$dueDate, $planType];
     }
 
+    /**
+     * @param Connection $db
+     * @param int        $portalId
+     * @param int        $profileId
+     * @param int        $loId
+     * @param int|null   $parentEnrolmentId
+     * @return Enrolment|null
+     * @deprecated
+     * @see findEnrolment
+     */
     public static function loadUserEnrolment(Connection $db, int $portalId, int $profileId, int $loId, int $parentEnrolmentId = null): ?Enrolment
     {
         $q = $db
@@ -401,6 +412,25 @@ class EnrolmentHelper
             ->from('gc_enrolment')
             ->where('lo_id = :loId')->setParameter(':loId', $loId)
             ->andWhere('profile_id = :profileId')->setParameter(':profileId', $profileId)
+            ->andWhere('taken_instance_id = :takenInstanceId')->setParameter(':takenInstanceId', $portalId);
+
+        !is_null($parentEnrolmentId) && $q
+            ->andWhere('parent_enrolment_id = :parentEnrolmentId')
+            ->setParameter(':parentEnrolmentId', $parentEnrolmentId);
+
+        $row = $q->execute()->fetch(DB::OBJ);
+
+        return $row ? Enrolment::create($row) : null;
+    }
+
+    public static function findEnrolment(Connection $db, int $portalId, int $userId, int $loId, int $parentEnrolmentId = null): ?Enrolment
+    {
+        $q = $db
+            ->createQueryBuilder()
+            ->select('*')
+            ->from('gc_enrolment')
+            ->where('lo_id = :loId')->setParameter(':loId', $loId)
+            ->andWhere('user_id = :userId')->setParameter(':userId', $userId)
             ->andWhere('taken_instance_id = :takenInstanceId')->setParameter(':takenInstanceId', $portalId);
 
         !is_null($parentEnrolmentId) && $q

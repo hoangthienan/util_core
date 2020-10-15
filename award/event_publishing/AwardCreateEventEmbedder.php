@@ -3,21 +3,24 @@
 namespace go1\util\award\event_publishing;
 
 use Doctrine\DBAL\Connection;
+use go1\core\util\client\federation_api\v1\UserMapper;
+use go1\core\util\client\UserDomainHelper;
 use go1\util\AccessChecker;
 use go1\util\portal\PortalHelper;
-use go1\util\user\UserHelper;
 use stdClass;
 use Symfony\Component\HttpFoundation\Request;
 
 class AwardCreateEventEmbedder
 {
-    protected $go1;
-    protected $access;
+    protected Connection        $go1;
+    protected AccessChecker     $access;
+    protected UserDomainHelper  $userDomainHelper;
 
-    public function __construct(Connection $go1, AccessChecker $access)
+    public function __construct(Connection $go1, AccessChecker $access, UserDomainHelper $userDomainHelper)
     {
         $this->go1 = $go1;
         $this->access = $access;
+        $this->userDomainHelper = $userDomainHelper;
     }
 
     public function embedded(stdClass $award, Request $req = null): array
@@ -36,7 +39,9 @@ class AwardCreateEventEmbedder
             }
         }
 
-        $embedded['authors'][] = UserHelper::load($this->go1, $award->user_id);
+        if ($author = $this->userDomainHelper->loadUser($award->user_id)) {
+            $embedded['authors'][] = UserMapper::toLegacyStandardFormat('', $author);
+        }
 
         return $embedded;
     }
