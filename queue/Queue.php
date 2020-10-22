@@ -42,6 +42,7 @@ class Queue
     const LO_CREATE                         = 'lo.create'; # Body: LO object, no lo.items should be expected.
     const LO_UPDATE                         = 'lo.update'; # Body: LO object with extra property: origin.
     const LO_DELETE                         = 'lo.delete'; # Body: LO object.
+    const LO_SHARE                          = 'lo.lo.share';
     const LO_SAVE_ASSESSORS                 = 'lo.save.assessors';          # Body: {body: [create: INT[], update: INT[], delete: INT[]], id: INT}
     const USER_ACCOUNT_INVITE               = 'user.space-account.invite';
     const USER_CREATE                       = 'user.create';
