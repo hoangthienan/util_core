@@ -31,6 +31,7 @@ class Queue
     const PORTAL_CONFIG_CREATE              = 'portal-config.create';
     const PORTAL_CONFIG_UPDATE              = 'portal-config.update';
     const PORTAL_CONFIG_DELETE              = 'portal-config.delete';
+    const PORTAL_REQUEST_CREATE             = 'portal-request.create';
     const CONTRACT_CREATE                   = 'contract.create';
     const CONTRACT_UPDATE                   = 'contract.update';
     const CONTRACT_DELETE                   = 'contract.delete';
